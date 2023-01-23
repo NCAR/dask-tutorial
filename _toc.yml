@@ -7,7 +7,7 @@ root: README
 parts:
 - caption: Introductions to Dask
   chapters:
-    - file: notebooks/00-dask-introduction.ipynb
+    - file: notebooks/00-dask-overview.ipynb
     - file: notebooks/01-dask-array.ipynb
     - file: notebooks/02-dask-dataframe.ipynb
     - file: notebooks/03-dask-cluster.ipynb
