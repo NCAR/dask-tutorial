@@ -10,7 +10,4 @@ parts:
     - file: notebooks/00-dask-introduction.ipynb
     - file: notebooks/01-dask-array.ipynb
     - file: notebooks/02-dask-dataframe.ipynb
-
-- caption: Introductions to Dask
-  chapters:
     - file: notebooks/03-dask-cluster.ipynb
