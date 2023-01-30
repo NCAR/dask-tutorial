@@ -13,4 +13,5 @@ parts:
     - file: notebooks/03-dask-cluster.ipynb
 
 - caption: Dask and Xarray
+  chapters:
     - file: notebooks/04-dask-xarray.ipynb
