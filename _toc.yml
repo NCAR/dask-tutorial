@@ -11,3 +11,7 @@ parts:
     - file: notebooks/01-dask-array.ipynb
     - file: notebooks/02-dask-dataframe.ipynb
     - file: notebooks/03-dask-cluster.ipynb
+
+- caption: Dask and Xarray
+  chapters:
+    - file: notebooks/04-dask-xarray.ipynb
