@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: CISL Dask Tutorial
+title: Dask on HPC Systems
 author: Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
 logo: images/ncar_logo.png
 
