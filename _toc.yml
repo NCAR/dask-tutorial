@@ -15,3 +15,8 @@ parts:
 - caption: Dask and Xarray
   chapters:
     - file: notebooks/04-dask-xarray.ipynb
+
+
+- caption: Dask on HPC
+  chapters:
+    - file: notebooks/05-dask-hpc.ipynb
