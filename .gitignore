@@ -1,1 +1,3 @@
 *.ipynb_checkpoints*
+dask-worker-logs
+notebooks/*.html
