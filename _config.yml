@@ -43,21 +43,14 @@ html:
   home_page_in_navbar  : true
 
 
+# Launch button settings
 launch_buttons:
   binder             : true
   binderhub          : true
   binderhub_url: https://mybinder.org
-  jupyterhub         : false
   thebe              : false
+  notebook_interface : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
+  jupyterhub         : fasle
+  #jupyterhub_url     : "https://jupyterhub.hpc.ucar.edu/"  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
   colab              : false
-  notebook_interface        : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
-  jupyterhub_url            : "https://jupyterhub.hpc.ucar.edu/"  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
-
-
-# Launch button settings
-#launch_buttons:
-#  notebook_interface        : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
-#  binderhub_url             : https://mybinder.org  # The URL of the BinderHub (e.g., https://mybinder.org)
-#  jupyterhub_url            : ""  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
-#  thebe                     : false  # Add a thebe button to pages (requires the repository to run on Binder)
 #  colab_url                 : "" # The URL of Google Colab (https://colab.research.google.com)

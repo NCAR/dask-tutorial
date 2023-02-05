@@ -15,8 +15,12 @@ parts:
   chapters:
     - file: notebooks/04-dask-xarray.ipynb
 
-- caption: Dask Distributed
+- caption: Dask on HPC
   chapters:
     - file: notebooks/03-dask-cluster.ipynb
     - file: notebooks/05-dask-hpc.ipynb
+
+- caption: Dask Best Practices
+  chapters:
     - file: notebooks/06-dask-chunking.ipynb
+
