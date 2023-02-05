@@ -1,9 +1,11 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Dask on HPC Systems
+title: Dask Tutorial
 author: Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
-logo: images/ncar_logo.png
+copyright: "2023"  # Copyright year to be placed in the footer
+
+logo: images/NCAR_CISL_logo.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -15,7 +17,10 @@ execute:
 
 
 # Define the name of the latex output file for PDF builds
+
 latex:
+  latex_engine              : pdflatex  # one of 'pdflatex', 'xelatex' (recommended for unicode), 'luatex', 'platex', 'uplatex'
+  use_jupyterbook_latex     : true # use jupyterbook-latex for pdf builds as default
   latex_documents:
     targetname: tutorial_book.tex
 
@@ -26,8 +31,8 @@ bibtex_bibfiles:
 # Information about where the book exists on the web
 repository:
   url: https://github.com/NCAR/dask-tutorial  # Online location of your book
-  path_to_book: docs  # Optional path to your book, relative to the repository root
-  branch: master  # Which branch of the repository should be used when creating links (optional)
+  #path_to_book:  # Optional path to your book, relative to the repository root
+  branch: main  # Which branch of the repository should be used when creating links (optional)
 
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
@@ -35,22 +40,17 @@ html:
   use_repository_button: true
   use_edit_page_button : true
   use_issues_button    : true
-  home_page_in_navbar  : false
+  home_page_in_navbar  : true
 
 
+# Launch button settings
 launch_buttons:
   binder             : true
   binderhub          : true
   binderhub_url: https://mybinder.org
-  jupyterhub         : false
   thebe              : false
+  notebook_interface : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
+  jupyterhub         : fasle
+  #jupyterhub_url     : "https://jupyterhub.hpc.ucar.edu/"  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
   colab              : false
-
-
-# Launch button settings
-#launch_buttons:
-#  notebook_interface        : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
-#  binderhub_url             : https://mybinder.org  # The URL of the BinderHub (e.g., https://mybinder.org)
-#  jupyterhub_url            : ""  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
-#  thebe                     : false  # Add a thebe button to pages (requires the repository to run on Binder)
 #  colab_url                 : "" # The URL of Google Colab (https://colab.research.google.com)

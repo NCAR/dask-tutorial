@@ -10,13 +10,17 @@ parts:
     - file: notebooks/00-dask-overview.ipynb
     - file: notebooks/01-dask-array.ipynb
     - file: notebooks/02-dask-dataframe.ipynb
-    - file: notebooks/03-dask-cluster.ipynb
 
 - caption: Dask and Xarray
   chapters:
-    - file: notebooks/04-dask-xarray.ipynb
-
+    - file: notebooks/03-dask-xarray.ipynb
 
 - caption: Dask on HPC
   chapters:
+    - file: notebooks/04-dask-cluster.ipynb
     - file: notebooks/05-dask-hpc.ipynb
+
+- caption: Dask Best Practices
+  chapters:
+    - file: notebooks/06-dask-chunking.ipynb
+
