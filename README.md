@@ -1,32 +1,73 @@
 ![NCAR CISL NSF Logo](images/NCAR_CISL_NSF_banner.jpeg)
-# NCAR Dask Tutorial (Spring 2023)
+# NCAR Dask Tutorial
 
-
+[![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://ncar.github.io/dask-tutorial/README.html)
 
 [![Jupyter Build](https://shields.api-test.nl/github/workflow/status/NCAR/dask-tutorial/JupyterBook?label=JupyterBook&logo=GitHub&style=flat-square)](https://ncar.github.io/dask-tutorial/README.html)
+[![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-green?style=flat-square&logo=Jupyter&color=green)](https://jupyter.org/try)
+[![Commits](https://img.shields.io/github/last-commit/NCAR/CTSM-Tutorial-2022?label=Last%20commit&style=flat-square&color=green)](https://github.com/NCAR/dask-tutorial/commits/main)
 
-**This page is currently under development.**
+**Welcome to NCAR Dask Tutorial!**
 
-NCAR Dask tutorial is half-day Dask mini-event that includes content both for Dask novices and for those more experienced with Dask who want to optimize their workflows for resource usage and HPC scheduling. 
+**Organized by: Brian Vanderwende, Negin Sobhani, Deepak Cherian, and Ben Kirk**
 
-CISL’s Consulting Services Group (CSG) and the NCAR Earth System’s Data Science (ESDS) Initiative are planning a half-day tutorial for users interested in effective use of Dask on HPC resources like Casper and Cheyenne. 
+The materials and notebooks in this tutorial is published as a Jupyter book here. [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://tutorial.xarray.dev)
 
-The 4-hour tutorial will be split into two sections, with early topics focused on novice Dask users and later topics focused on intermediate usage on HPC and associated best practices. The knowledge areas covered include (but are not limited to):
-
-Beginner Section
-* High-level collections including dask.array and dask.dataframe 
-* Distributed Dask clusters using HPC job schedulers
-* Earth Science data analysis using Dask with Xarray
-* Using the Dask dashboard to understand your computation 
-
-Intermediate Section
-* Optimizing the number of workers and memory allocation
-* Choosing appropriate chunk shapes and sizes for Dask collections
-* Querying resource usage and debugging errors
-
-The tutorial will take place from 1-5 PM Mountain Time on February 6 and can be attended either virtually or in-person at the NCAR Mesa Lab.
-
-If you are interested in participating in one or both of these sessions, please use [this form](https://docs.google.com/forms/d/e/1FAIpQLSevwsjrpDmDb6lsjsRbSPyEGWrsSSB-5LvERgI4ZDEATHF3jg/viewform) to register by February 3rd at 12 PM MST. 
+Here you will find the tutorial materials from the CISL/CSG Dask Tutorial. 
+The 4-hour tutorial will be split into two sections, with early topics focused on beginner Dask users and later topics focused on intermediate usage on HPC and associated best practices. 
 
 This tutorial is open to non-UCAR staff. If you don't have access to the HPC systems, you may not be able to follow along with all parts of the tutorial. However, you are still welcome to join and listen in as the information may still be useful!
+
+Video Recoding: Will be available after the event
+
+## Course Outline
+
+* Dask Overview
+* Dask Data Arrays
+* Dask DataFrames
+* Dask + Xarray
+* Dask Schedulers
+* Dask on HPC Systems
+* Dask Best Practices
+
+## Prerequisites
+Before beginning any of the tutorials, it is highly recommended that you have a basic understanding of Python programming and Python libraries such as NumPy, pandas, and Xarray.
+
+## Contributing
+We welcome contributions from the community! If you have a tutorial you would like to add or if you would like to improve an existing tutorial, please follow these steps:
+
+Fork the repository.
+
+Clone the repository to your local machine:
+```
+git clone https://github.com/your-username/dask-tutorial-repository.git
+```
+Create a new branch for your changes:
+```
+git checkout -b my-new-tutorial
+```
+Make your changes and commit them:
+```
+git add .
+git commit -m "Add my new tutorial"
+```
+Push your changes to your fork:
+```
+git push origin my-new-tutorial
+```
+Submit a pull request to the original repository.
+
+
+
+## ❓Support
+If you have any questions or need help with the tutorials, please open an issue in the repository.
+
+## 👍 Acknowledgments
+
+* NCAR CSG Team
+* ESDS Initiative
+
+## License
+The tutorials in this repository are released under the MIT License.
+
 
