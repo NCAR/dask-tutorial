@@ -9,7 +9,7 @@
 
 **Organized by: Brian Vanderwende, Negin Sobhani, Deepak Cherian, and Ben Kirk**
 
-The materials and notebooks in this tutorial is published as a Jupyter book here. [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://tutorial.xarray.dev)
+The materials and notebooks in this tutorial is published as a Jupyter book here. [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://ncar.github.io/dask-tutorial/README.html)
 
 Here you will find the tutorial materials from the CISL/CSG Dask Tutorial. 
 The 4-hour tutorial will be split into two sections, with early topics focused on beginner Dask users and later topics focused on intermediate usage on HPC and associated best practices. 
