@@ -20,13 +20,13 @@ Video Recoding: Will be available after the event
 
 ## Course Outline
 
-* 0. (Dask Overview)[https://ncar.github.io/dask-tutorial/notebooks/00-dask-overview.html]
-* 1. (Dask Data Arrays)[https://ncar.github.io/dask-tutorial/notebooks/01-dask-array.html]
-* 2. (Dask DataFrames)[https://ncar.github.io/dask-tutorial/notebooks/02-dask-dataframe.html]
-* 3. (Dask + Xarray)[https://ncar.github.io/dask-tutorial/notebooks/03-dask-xarray.html]
-* 4. (Dask Schedulers)[https://ncar.github.io/dask-tutorial/notebooks/04-dask-cluster.html]
-* 5. (Dask on HPC Systems)[https://ncar.github.io/dask-tutorial/notebooks/05-dask-hpc.html]
-* 6. (Dask Best Practices)[https://ncar.github.io/dask-tutorial/notebooks/06-dask-chunking.html]
+0. [Dask Overview](https://ncar.github.io/dask-tutorial/notebooks/00-dask-overview.html)
+1. [Dask Data Arrays](https://ncar.github.io/dask-tutorial/notebooks/01-dask-array.html)
+2. [Dask DataFrames](https://ncar.github.io/dask-tutorial/notebooks/02-dask-dataframe.html)
+3. [Dask + Xarray](https://ncar.github.io/dask-tutorial/notebooks/03-dask-xarray.html)
+4. [Dask Schedulers](https://ncar.github.io/dask-tutorial/notebooks/04-dask-cluster.html)
+5. [Dask on HPC Systems](https://ncar.github.io/dask-tutorial/notebooks/05-dask-hpc.html)
+6. [Dask Best Practices](https://ncar.github.io/dask-tutorial/notebooks/06-dask-chunking.html)
 
 ## Prerequisites
 Before beginning any of the tutorials, it is highly recommended that you have a basic understanding of Python programming and Python libraries such as NumPy, pandas, and Xarray.
@@ -36,7 +36,7 @@ Before beginning any of the tutorials, it is highly recommended that you have a 
 
 This tutorial is open to non-UCAR staff. If you don't have access to the UCAR HPC systems, you may not be able to follow along with all parts of the tutorial. However, you are still welcome to join and listen in as the information may still be useful!
 
-### NCAR JupyterHub
+### [NCAR JupyterHub](https://github.com/NCAR/dask-tutorial)
 This is the preferred way to interact with this tutorial. Users with access to Casper can run the notebooks interactively, and will be able to save their work and pull in new updates.
 To connect to NCAR JupyterHub, please open this link in a web browser: https://jupyterhub.hpc.ucar.edu/
 
@@ -44,7 +44,7 @@ Next, clone the repository to your local directory:
 ```
 git clone https://github.com/NCAR/dask-tutorial
 ```
-Next, open the notebooks and interact with them. Make sure to choose NPL kernel. 
+Finally, open the notebooks and interact with them. Make sure to choose NPL kernel. 
 
 ### Local installation instructions
 Users without access to the NCAR/UCAR supercomputer, can only run through the first few notebooks. 
@@ -52,7 +52,7 @@ If you are still interested to run the notebooks locally:
 
 First clone this repository to your local machine via:
 ```
-git clone https://github.com/andersy005/xarray-tutorial
+git clone https://github.com/NCAR/dask-tutorial
 ```
 
 Next, download conda (if you haven't already)
