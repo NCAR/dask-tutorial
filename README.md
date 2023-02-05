@@ -32,7 +32,57 @@ Video Recoding: Will be available after the event
 Before beginning any of the tutorials, it is highly recommended that you have a basic understanding of Python programming and Python libraries such as NumPy, pandas, and Xarray.
 
 
-## To 
+## ⌨️ Getting set up
+
+This tutorial is open to non-UCAR staff. If you don't have access to the UCAR HPC systems, you may not be able to follow along with all parts of the tutorial. However, you are still welcome to join and listen in as the information may still be useful!
+
+### NCAR JupyterHub
+This is the preferred way to interact with this tutorial. Users with access to Casper can run the notebooks interactively, and will be able to save their work and pull in new updates.
+To connect to NCAR JupyterHub, please open this link in a web browser: https://jupyterhub.hpc.ucar.edu/
+
+Next, clone the repository to your local directory:
+```
+git clone https://github.com/NCAR/dask-tutorial
+```
+Next, open the notebooks and interact with them. Make sure to choose NPL kernel. 
+
+### Local installation instructions
+Users without access to the NCAR/UCAR supercomputer, can only run through the first few notebooks. 
+If you are still interested to run the notebooks locally:
+
+First clone this repository to your local machine via:
+```
+git clone https://github.com/andersy005/xarray-tutorial
+```
+
+Next, download conda (if you haven't already)
+
+If you do not already have the conda package manager installed, please follow the instructions [here](https://github.com/conda-forge/miniforge#install).
+
+Now, create a conda environment:
+
+Navigate to the `dask-tutorial/` directory and create a new conda environment with the required
+packages via:
+
+```terminal
+cd dask-tutorial
+conda env update --file environment.yml
+```
+
+This will create a new conda environment named "dask-tutorial".
+
+Next, activate the environment:
+
+```
+conda activate dask-tutorial
+```
+
+Finally, launch JupyterLab with:
+
+```
+jupyter lab
+```
+
 ## Contributing
 We welcome contributions from the community! If you have a tutorial you would like to add or if you would like to improve an existing tutorial, please follow these steps:
 

@@ -1,4 +1,4 @@
-name: xarray-tutorial
+name: dask-tutorial
 channels:
   - conda-forge
   - nodefaults
