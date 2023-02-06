@@ -114,7 +114,7 @@ If you have any questions or need help with the tutorials, please [open an githu
 
 ## 👍 Acknowledgments
 
-* NCAR CSG Team
+* NCAR CISL/CSG Team
 * ESDS Initiative
 
 ## License
