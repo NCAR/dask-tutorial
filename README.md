@@ -44,11 +44,11 @@ Next, clone the repository to your local directory:
 ```
 git clone https://github.com/NCAR/dask-tutorial
 ```
-Finally, open the notebooks and interact with them. Make sure to choose NPL kernel. 
+Finally, open the notebooks and interact with them. Make sure to choose the "NPL 2023a" kernel.
 
 ### Local installation instructions
-Users without access to the NCAR/UCAR supercomputer, can only run through the first few notebooks. 
-If you are still interested to run the notebooks locally:
+Users without access to the NCAR/UCAR Casper cluster can only run through the first few notebooks.
+To run the notebooks locally:
 
 First clone this repository to your local machine via:
 ```
@@ -110,7 +110,7 @@ Submit a pull request to the original repository.
 
 
 ## Support
-If you have any questions or need help with the tutorials, please [open an github issue](https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here.) in the repository.
+If you have any questions or need help with the tutorials, please [open a GitHub issue](https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here.) in the repository.
 
 ## 👍 Acknowledgments
 
