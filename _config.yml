@@ -50,7 +50,7 @@ launch_buttons:
   binderhub_url: https://mybinder.org
   thebe              : false
   notebook_interface : jupyterlab  # The interface interactive links will activate ["classic", "jupyterlab"]
-  jupyterhub         : fasle
-  #jupyterhub_url     : "https://jupyterhub.hpc.ucar.edu/"  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
+  jupyterhub         : false
+  jupyterhub_url     : "https://jupyterhub.hpc.ucar.edu/stable/"  # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
   colab              : false
 #  colab_url                 : "" # The URL of Google Colab (https://colab.research.google.com)
