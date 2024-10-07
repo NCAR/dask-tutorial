@@ -1,0 +1,1072 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Dask Chunking - Best Practices &#8212; Dask Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/06-dask-chunking';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Dask on HPC - Starting Clusters, Monitoring, and Debugging" href="05-dask-hpc.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/NCAR_CISL_logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/NCAR_CISL_logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    NCAR Dask Tutorial
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductions to Dask</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-dask-overview.html">Dask Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-dask-array.html">Dask Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-dask-dataframe.html">Dask DataFrame</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask and Xarray</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03-dask-xarray.html">Parallelizing Xarray with Dask</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask on HPC</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04-dask-cluster.html">Dask Schedulers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-dask-hpc.html">Dask on HPC - Starting Clusters, Monitoring, and Debugging</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask Best Practices</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Dask Chunking - Best Practices</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NCAR/dask-tutorial/main?urlpath=lab/tree/notebooks/06-dask-chunking.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://jupyterhub.hpc.ucar.edu/stable/hub/user-redirect/git-pull?repo=https%3A//github.com/NCAR/dask-tutorial&urlpath=lab/tree/dask-tutorial/notebooks/06-dask-chunking.ipynb&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/edit/main/notebooks/06-dask-chunking.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2Fnotebooks/06-dask-chunking.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/06-dask-chunking.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dask Chunking - Best Practices</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-will-learn">In this tutorial, you will learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunking-considerations">Chunking Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-up-our-pbs-cluster">Starting up our PBS Cluster</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunk-size-load-balancing-vs-overhead">Chunk size - Load balancing vs. Overhead</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#let-s-test-these-rules-of-thumb">Let’s test these rules of thumb…</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matching-chunking-in-a-netcdf4-file">Matching chunking in a netCDF4 file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-file-chunking">Inspecting file chunking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-chunks-using-xarray">Specifying chunks using Xarray</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rechunking-is-expensive">Rechunking is expensive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway-message">Takeaway Message</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/NCAR-contemp-logo-blue.png"
+     width="750px"
+     alt="NCAR logo"
+     style="vertical-align:middle;margin:30px 0px"/></p>
+<section class="tex2jax_ignore mathjax_ignore" id="dask-chunking-best-practices">
+<h1>Dask Chunking - Best Practices<a class="headerlink" href="#dask-chunking-best-practices" title="Permalink to this heading">#</a></h1>
+<p><strong>ESDS Dask tutorial | 06 February, 2023</strong></p>
+<p>Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk<br />
+Computational &amp; Information Systems Lab (CISL)<br />
+<a class="reference external" href="mailto:negins&#37;&#52;&#48;ucar&#46;edu">negins<span>&#64;</span>ucar<span>&#46;</span>edu</a>, <a class="reference external" href="mailto:vanderwb&#37;&#52;&#48;ucar&#46;edu">vanderwb<span>&#64;</span>ucar<span>&#46;</span>edu</a></p>
+<hr class="docutils" />
+<section id="in-this-tutorial-you-will-learn">
+<h2>In this tutorial, you will learn:<a class="headerlink" href="#in-this-tutorial-you-will-learn" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Basic rules of thumb for chunking</p></li>
+<li><p>The importance of conforming to file chunks</p></li>
+<li><p>The impact of rechunking in the computational pipeline</p></li>
+</ul>
+<p><strong>Related Documentation</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.dask.org/en/stable/array-chunks.html">Dask Chunking Documentation</a></p></li>
+<li><p><a class="reference external" href="https://blog.dask.org/2021/11/02/choosing-dask-chunk-sizes">Choosing Chunk Sizes Blog Post</a></p></li>
+<li><p><a class="reference external" href="https://docs.xarray.dev/en/stable/user-guide/dask.html#chunking-and-performance">Xarray Chunking Documentation</a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="chunking-considerations">
+<h2>Chunking Considerations<a class="headerlink" href="#chunking-considerations" title="Permalink to this heading">#</a></h2>
+<p>Determining the best approach for sizing your Dask chunks can be tricky and often requires intuition about both Dask and your particular dataset. There are various considerations you may need to account for depending on your workflow:</p>
+<ul class="simple">
+<li><p>The size (in bytes) of your chunks vs your number of workers</p></li>
+<li><p>The chunk layout of data read from disk (formats like HDF5, Zarr)</p></li>
+<li><p>The access patterns of your computational pipeline</p></li>
+</ul>
+<p><strong>Dask Array with NumPy array chunks…</strong></p>
+<img src="https://docs.dask.org/en/stable/_images/dask-array.svg" width=500px alt="Dask Array Chunks">
+<hr class="docutils" />
+<section id="starting-up-our-pbs-cluster">
+<h3>Starting up our PBS Cluster<a class="headerlink" href="#starting-up-our-pbs-cluster" title="Permalink to this heading">#</a></h3>
+<p>To demonstrate the affects of different chunking strategies, let’s instantiate a <code class="docutils literal notranslate"><span class="pre">PBSCluster</span></code> with 4 workers</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">from</span> <span class="nn">dask_jobqueue</span> <span class="kn">import</span> <span class="n">PBSCluster</span>
+<span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a PBS cluster object</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">PBSCluster</span><span class="p">(</span>
+    <span class="n">job_name</span> <span class="o">=</span> <span class="s1">&#39;dask-wk23-chunking&#39;</span><span class="p">,</span>
+    <span class="n">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="s1">&#39;10GiB&#39;</span><span class="p">,</span>
+    <span class="n">processes</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">local_directory</span> <span class="o">=</span> <span class="s1">&#39;/glade/scratch/vanderwb/temp/dask/spill/pbs.$PBS_JOBID&#39;</span><span class="p">,</span>
+    <span class="n">resource_spec</span> <span class="o">=</span> <span class="s1">&#39;select=1:ncpus=1:mem=10GB&#39;</span><span class="p">,</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="s1">&#39;casper&#39;</span><span class="p">,</span>
+    <span class="n">walltime</span> <span class="o">=</span> <span class="s1">&#39;30:00&#39;</span><span class="p">,</span>
+    <span class="n">interface</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sanity-check our setup</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster</span><span class="o">.</span><span class="n">job_script</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="chunk-size-load-balancing-vs-overhead">
+<h2>Chunk size - Load balancing vs. Overhead<a class="headerlink" href="#chunk-size-load-balancing-vs-overhead" title="Permalink to this heading">#</a></h2>
+<p>There is always an optimal chunk size given your hardware setup and computation problem that is neither too big nor too small. Finding this chunk size often requires some trial and error, but it is helpful to know what you are looking to avoid:</p>
+<ul class="simple">
+<li><p><strong>Too small</strong> - if your chunks are too small, you will end up spending a significant and wasteful amount of time waiting for Dask to perform overhead (scheduling tasks, data communication) relative to the time spent computing</p></li>
+<li><p><strong>Too large</strong> - you run the risk of spilling to dask or memory failures and the scheduler also has a more difficult time load balancing</p></li>
+</ul>
+<p>The following rules of thumb are known, but it will vary according to your workflow:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Too Small</p></th>
+<th class="head"><p>Possibly Too Small</p></th>
+<th class="head"><p>Optimal</p></th>
+<th class="head"><p>Too Large</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>&lt; 1 MB</p></td>
+<td><p>1-100 MB</p></td>
+<td><p>100 MB - 1 GB</p></td>
+<td><p>&gt; Spill threshold</p></td>
+</tr>
+</tbody>
+</table>
+<p>In practice, using chunks close to 0.1-0.5 GB in size works well.</p>
+<section id="let-s-test-these-rules-of-thumb">
+<h3>Let’s test these rules of thumb…<a class="headerlink" href="#let-s-test-these-rules-of-thumb" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Spin up workers on our PBS cluster</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">wait_for_workers</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For this exercise, we will simply generate a random number <strong>Dask Array</strong> of sufficient size that it would not fit in our login session memory. Let’s try different chunking strategies.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">60000</span><span class="p">,</span> <span class="mi">72000</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">30000</span><span class="p">,</span><span class="mi">36000</span><span class="p">))</span>
+<span class="n">t</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>These chunks are too large. They will exceed our spill threshold (0.6-0.7) and even briefly exceed our pause limit (0.8). The only thing working in our favor in this configuration is that non-aggregation tasks should be well-balanced among the 4 workers with 4 chunks, and we have a short task graph.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">task</span><span class="o">.</span><span class="n">dask</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this next configuration, we end up specifying a configuration with very small chunks relative to the problem size. We will not come close to the memory limits, but we will incur significant overhead relative to our computational task.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">60000</span><span class="p">,</span> <span class="mi">72000</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">t</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">task</span><span class="o">.</span><span class="n">dask</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we will choose chunk sizes that fall in our expected “optimal” range of <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">MiB</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">GiB</span></code>. We should be allowing Dask to distribute work efficiently but not imposing a high overhead…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">60000</span><span class="p">,</span> <span class="mi">72000</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span><span class="mi">6000</span><span class="p">))</span>
+<span class="n">t</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="matching-chunking-in-a-netcdf4-file">
+<h2>Matching chunking in a netCDF4 file<a class="headerlink" href="#matching-chunking-in-a-netcdf4-file" title="Permalink to this heading">#</a></h2>
+<p>If you are using a chunked data format, it is best to specify Dask chunks which equal to or (better-yet) multiples of the chunk shape on disk. If chunk sizes aren’t multiples of disk chunks, you risk unnecessary additional reads of data as multiple disk chunks will need to be read to populate each Dask chunk. This can be very inefficient!</p>
+<section id="inspecting-file-chunking">
+<h3>Inspecting file chunking<a class="headerlink" href="#inspecting-file-chunking" title="Permalink to this heading">#</a></h3>
+<p>The exact process for checking file chunking depends on the format. Using the netCDF4 Python module, we can query the chunking parameters of any variable in a netCDF4 file.</p>
+<p><em>Classic netCDF files do not support chunking!</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netCDF4</span> <span class="k">as</span> <span class="nn">nc</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will use a data file from a model forecast dataset over the Arctic:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_file</span> <span class="o">=</span> <span class="s1">&#39;/glade/collections/rda/data/ds631.1/asr15.fcst3.3D/asr15km.fct.3D.20120916.nc&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once we open the <em>dataset</em> (nc4 file), we can reference a variable of interest using a dictionary key and then get the dimensions of that variable using <code class="docutils literal notranslate"><span class="pre">get_dims()</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc_data</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">)</span>
+<span class="n">nc_data</span><span class="p">[</span><span class="s1">&#39;CLDFRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_dims</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can then use the <code class="docutils literal notranslate"><span class="pre">chunking()</span></code> method to get our chunk size for each dimension:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc_data</span><span class="p">[</span><span class="s1">&#39;CLDFRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">chunking</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="specifying-chunks-using-xarray">
+<h3>Specifying chunks using Xarray<a class="headerlink" href="#specifying-chunks-using-xarray" title="Permalink to this heading">#</a></h3>
+<p>Now that we understand our file chunks, we can specify a preferred chunk size to <code class="docutils literal notranslate"><span class="pre">open_dataset</span></code>. Note that if we use the <code class="docutils literal notranslate"><span class="pre">chunks</span></code> parameter, any dimension we don’t mention will be spanned in its entirety for chunks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Open dataset using chunking along Time dimension</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">,</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Time&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since we are only specifying a chunk size for Time, this should be equivalent to the following chunk shape:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Time&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="s1">&#39;num_metgrid_levels&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+          <span class="s1">&#39;south_north&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+          <span class="s1">&#39;west_east&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>We can confirm that our chunks look as intended using the DataArray <em>repr</em>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Note:</strong> You can also retrieve the file chunk size from Xarray itself, but it is not shown in the above repr. Use the following DataArray (variable) attribute instead:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">encoding</span><span class="p">[</span><span class="s2">&quot;chunksizes&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now let’s benchmark various chunk configurations. Our initial guess achieves the recommended ratio of &gt;= 2 chunks per worker, but does use multiples of the file chunk size except in the time dimension.</p>
+<p>For this benchmark, we will find the maximum cloud fraction across vertical levels at all locations and times.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;num_metgrid_levels&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice above that this file has chunking that does not divide evenly into the dimension sizes. We can specify that our chunks match the file chunks directly, but this will leave “remainder” chunks and will slightly increase overhead.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">,</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Time&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;num_metgrid_levels&quot;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+                                        <span class="s2">&quot;south_north&quot;</span> <span class="p">:</span> <span class="mi">355</span><span class="p">,</span> <span class="s2">&quot;east_west&quot;</span> <span class="p">:</span> <span class="mi">355</span><span class="p">})</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;num_metgrid_levels&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The most problematic case occurs when we have chunk sizes that are smaller than the file chunks in one or more dimensions. Let’s evaluate the impact by using progressively smaller vertical level ranks:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using half the file chunk size in the vertical (same number of chunks)</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">,</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;num_metgrid_levels&quot;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;num_metgrid_levels&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use 1/4 the chunk size in the vertical</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">,</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Time&quot;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;num_metgrid_levels&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;num_metgrid_levels&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>It is also possible to use “auto” chunking, whereby the DataArray chunks are calculated for you. Are these optimal?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Open dataset using auto-chunking</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">my_file</span><span class="p">,</span> <span class="n">chunks</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">CLDFRA</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;num_metgrid_levels&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>No! Avoid using auto chunking for files written in chunks!</strong></p>
+</section>
+</section>
+<section id="rechunking-is-expensive">
+<h2>Rechunking is expensive<a class="headerlink" href="#rechunking-is-expensive" title="Permalink to this heading">#</a></h2>
+<p>There are various reasons Dask might need to rechunk data, but in any case, it can be an expensive operation with a large amount of communication required between workers.</p>
+<p><strong>Scenario:</strong> We wish to get the mean difference between two versions of a model for the same case study. Unfortunately, while the grids match for each version, the file chunk size used was different.</p>
+<p>Here, we will emulate the scenario with Dask Arrays…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">old_run</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">old_run</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_run</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_run</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s set up and analyse (via a high-level task graph), the operations we will need to do to retrieve a mean-squared difference/error between our two datasets.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the mean squared difference</span>
+<span class="n">mse_graph</span> <span class="o">=</span> <span class="p">((</span><span class="n">old_run</span> <span class="o">-</span> <span class="n">new_run</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">old_run</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mse_graph</span><span class="o">.</span><span class="n">dask</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note the two rechunking operations near the beginning of our task graph. Because our data arrays are chunked differently, Dask must rechunk first to avoid slowing down operations with large data transfers between workers. It is good that Dask does this, but rechunking is still expensive…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">mse_graph</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In most circumstances, we will want to rechunk this data ourselves manually, and then save state (probably by creating a new rechunked data file). This one-time cost means we will not need to rechunk again in the future.</p>
+<p>In our scenario, we would likely rechunk the old run data, since we expect all future runs will have the new chunking.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">old_run_rechunked</span> <span class="o">=</span> <span class="n">old_run</span><span class="o">.</span><span class="n">rechunk</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Once this is done in a conversion workflow, we could load the rechunked data in our current workflow.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">old_run</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">chunks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the mean squared difference</span>
+<span class="n">mse_graph</span> <span class="o">=</span> <span class="p">((</span><span class="n">old_run</span> <span class="o">-</span> <span class="n">new_run</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">old_run</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mse_graph</span><span class="o">.</span><span class="n">dask</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">mse_graph</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="takeaway-message">
+<h2>Takeaway Message<a class="headerlink" href="#takeaway-message" title="Permalink to this heading">#</a></h2>
+<p>Chunking is fundamental to Dask and its blocked-algorithm approach, so don’t ignore intelligently sizing your data chunks. Finding the perfect chunk size is not the goal, but neglecting simple rules of thumb can lead to massive performance penalties when aggregated over a complex multipart analysis.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "npl-2023a"
+        },
+        kernelOptions: {
+            name: "npl-2023a",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'npl-2023a'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05-dask-hpc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Dask on HPC - Starting Clusters, Monitoring, and Debugging</p>
+      </div>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-will-learn">In this tutorial, you will learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunking-considerations">Chunking Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-up-our-pbs-cluster">Starting up our PBS Cluster</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunk-size-load-balancing-vs-overhead">Chunk size - Load balancing vs. Overhead</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#let-s-test-these-rules-of-thumb">Let’s test these rules of thumb…</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matching-chunking-in-a-netcdf4-file">Matching chunking in a netCDF4 file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-file-chunking">Inspecting file chunking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-chunks-using-xarray">Specifying chunks using Xarray</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rechunking-is-expensive">Rechunking is expensive</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeaway-message">Takeaway Message</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

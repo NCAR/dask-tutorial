@@ -1,0 +1,1687 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Dask Schedulers &#8212; Dask Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/04-dask-cluster';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dask on HPC - Starting Clusters, Monitoring, and Debugging" href="05-dask-hpc.html" />
+    <link rel="prev" title="Parallelizing Xarray with Dask" href="03-dask-xarray.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/NCAR_CISL_logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/NCAR_CISL_logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    NCAR Dask Tutorial
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductions to Dask</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-dask-overview.html">Dask Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-dask-array.html">Dask Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-dask-dataframe.html">Dask DataFrame</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask and Xarray</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03-dask-xarray.html">Parallelizing Xarray with Dask</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask on HPC</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Dask Schedulers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-dask-hpc.html">Dask on HPC - Starting Clusters, Monitoring, and Debugging</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask Best Practices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06-dask-chunking.html">Dask Chunking - Best Practices</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NCAR/dask-tutorial/main?urlpath=lab/tree/notebooks/04-dask-cluster.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://jupyterhub.hpc.ucar.edu/stable/hub/user-redirect/git-pull?repo=https%3A//github.com/NCAR/dask-tutorial&urlpath=lab/tree/dask-tutorial/notebooks/04-dask-cluster.ipynb&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/edit/main/notebooks/04-dask-cluster.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2Fnotebooks/04-dask-cluster.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/04-dask-cluster.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dask Schedulers</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-learn">In this tutorial, you learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dask-scheduler-our-task-orchestrator">The Dask scheduler - our task orchestrator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schedulers">Schedulers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-machine-scheduler">1. Single machine scheduler</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-threaded-scheduler">1.1. Single-threaded scheduler</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#threaded-scheduler">1.2. Threaded scheduler</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-clusters">Distributed Clusters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-scheduler">2. Distributed scheduler</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#local-cluster">2.1. Local Cluster</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#let-s-start-by-creating-a-local-cluster">Let’s start by creating a Local Cluster</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-distributed-cluster">Dask Distributed (Cluster)</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/NCAR-contemp-logo-blue.png"
+     width="750px"
+     alt="NCAR logo"
+     style="vertical-align:middle;margin:30px 0px"/></p>
+<section class="tex2jax_ignore mathjax_ignore" id="dask-schedulers">
+<h1>Dask Schedulers<a class="headerlink" href="#dask-schedulers" title="Permalink to this heading">#</a></h1>
+<p><strong>ESDS dask tutorial | 06 February, 2023</strong></p>
+<p>Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk<br />
+Computational &amp; Information Systems Lab (CISL)<br />
+<a class="reference external" href="mailto:negins&#37;&#52;&#48;ucar&#46;edu">negins<span>&#64;</span>ucar<span>&#46;</span>edu</a>, <a class="reference external" href="mailto:vanderwb&#37;&#52;&#48;ucar&#46;edu">vanderwb<span>&#64;</span>ucar<span>&#46;</span>edu</a></p>
+<hr class="docutils" />
+<section id="in-this-tutorial-you-learn">
+<h2>In this tutorial, you learn:<a class="headerlink" href="#in-this-tutorial-you-learn" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Components of Dask Schedulers</p></li>
+<li><p>Types of Dask Schedulers</p></li>
+<li><p>Single Machine Schedulers</p></li>
+</ul>
+<p><strong>Related Documentation</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.dask.org/en/latest/scheduling.html">Dask Scheduling</a></p></li>
+<li><p><a class="reference external" href="https://docs.dask.org/en/stable/deploying-python.html">Dask Local Cluster</a></p></li>
+<li><p><a class="reference external" href="https://docs.dask.org/en/latest/deploying-python.html">Dask Cluster manager</a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<p>As we mentioned in our Dask overview, Dask is composed of two main parts:</p>
+<ol class="arabic simple">
+<li><p>Dask Collections (APIs)</p></li>
+<li><p>Dynamic Task Scheduling</p></li>
+</ol>
+<p>So far, we have talked about different Dask collections, but in this tutorial we are going to talk more about the second part.</p>
+</section>
+<section id="the-dask-scheduler-our-task-orchestrator">
+<h2>The Dask scheduler - our task orchestrator<a class="headerlink" href="#the-dask-scheduler-our-task-orchestrator" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Dask.distributed</span></code> task <em>scheduler</em> is a centralized, dynamic system that coordinates the efforts of various dask <em>worker</em> processes spread accross different machines.</p>
+<p>When a computational task is submitted, the Dask distributed <em>scheduler</em> sends it off to a Dask <em>cluster</em> - simply a collection of Dask <em>workers</em>. A worker is typically a separate Python process on either the local host or a remote machine.</p>
+<div class="alert alert-success" markdown="1">
+<ul class="simple">
+<li><p><strong>worker</strong> - a Python interpretor which will perform work on a subset of our dataset.</p></li>
+<li><p><strong>cluster</strong> - an object containing instructions for starting and talking to workers.</p></li>
+<li><p><strong>scheduler</strong> - sends tasks from our task graph to workers.</p></li>
+<li><p><strong>client</strong> - a local object that points to the scheduler (<em>often local but not always</em>). </div></p></li>
+</ul>
+<img src="https://docs.mlrun.org/en/stable/_images/dask_dist.png" width="700px" style="vertical-align:middle;margin:30px 0px"/></section>
+<section id="schedulers">
+<h2>Schedulers<a class="headerlink" href="#schedulers" title="Permalink to this heading">#</a></h2>
+<p>Dask essentially offers two types of schedulers:</p>
+<img src="https://docs.mlrun.org/en/stable/_images/dask-overview.svg" width="700px" style="vertical-align:middle;margin:30px 0px"/>
+<section id="single-machine-scheduler">
+<h3>1. Single machine scheduler<a class="headerlink" href="#single-machine-scheduler" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The Single-machine Scheduler schedules tasks and manages the execution of those tasks on the same machine where the scheduler is running.</p></li>
+<li><p>It is designed to be used in situations where the amount of data or the computational requirements are too large for a single process to handle, but not large enough to warrant the use of a cluster of machines.</p></li>
+<li><p>It is relatively simple and cheap to use but it does not scale as it only runs on a single machine.</p></li>
+</ul>
+<p><strong>Single machine scheduler is the default choice used by Dask.</strong></p>
+<p>In Dask, there are several types of single machine schedulers that can be used to schedule computations on a single machine:</p>
+<section id="single-threaded-scheduler">
+<h4>1.1. Single-threaded scheduler<a class="headerlink" href="#single-threaded-scheduler" title="Permalink to this heading">#</a></h4>
+<p>This scheduler runs all tasks <strong>serially</strong> on a single thread.<br />
+This is only useful for debugging and profiling, but does not have any parallelization.</p>
+</section>
+<section id="threaded-scheduler">
+<h4>1.2. Threaded scheduler<a class="headerlink" href="#threaded-scheduler" title="Permalink to this heading">#</a></h4>
+<p>The threaded scheduler uses a pool of <strong>local</strong> threads to execute tasks concurrently.<br />
+This is the default scheduler for Dask, and is suitable for most use cases on a single machine. Multithreading works well for Dask Array and Dask DataFrame.</p>
+<p>To select one of the above scheduler for your computation, you can specify it when doing <code class="docutils literal notranslate"><span class="pre">.compute()</span></code>:</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">this</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="s2">&quot;single-threaded&quot;</span><span class="p">)</span>  <span class="c1"># for debugging and profiling only</span>
+</pre></div>
+</div>
+<p>As mentioned above the <em>threaded scheduler</em> is the default scheduler in Dask. But you can set the default scheduler to Single-threaded or multi-processing by:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask</span>
+<span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="s1">&#39;synchronous&#39;</span><span class="p">)</span>  <span class="c1"># overwrite default with single-threaded scheduler</span>
+</pre></div>
+</div>
+<p>Multi-processing works well for pure Python code - <em>delayed</em> functions and operations on Dask Bags.</p>
+<p>Let’s compare the performance of each of these single-machine schedulers:</p>
+</section>
+</section>
+<section id="distributed-clusters">
+<h3>Distributed Clusters<a class="headerlink" href="#distributed-clusters" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1">## - numpy performance</span>
+<span class="n">xn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="mi">20_000</span><span class="p">))</span>
+<span class="n">yn</span> <span class="o">=</span> <span class="n">xn</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">yn</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 14.9 s, sys: 1.32 s, total: 16.2 s
+Wall time: 16.1 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 9.99987393,  9.99942047, 10.00069322, ...,  9.99997333,
+        9.99945909, 10.00094973])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># -- dask array using the default</span>
+<span class="n">xd</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="mi">20_000</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">))</span>
+<span class="n">yd</span> <span class="o">=</span> <span class="n">xd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">yd</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 14.8 s, sys: 112 ms, total: 14.9 s
+Wall time: 3.83 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 9.99928454,  9.99968075, 10.00027327, ..., 10.00030439,
+        9.9999113 ,  9.99947802])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="c1"># -- dask testing different schedulers:</span>
+<span class="k">for</span> <span class="n">sch</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;threading&#39;</span><span class="p">,</span> <span class="s1">&#39;processes&#39;</span><span class="p">,</span> <span class="s1">&#39;sync&#39;</span><span class="p">]:</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">yd</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">sch</span><span class="p">)</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sch</span><span class="si">:</span><span class="s2">&gt;10</span><span class="si">}</span><span class="s2"> :  </span><span class="si">{</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> threading :  3.7886 s
+ processes :  5.2656 s
+      sync :  14.7481 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yd</span><span class="o">.</span><span class="n">dask</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+    <div>
+        <div style="width: 52px; height: 52px; position: absolute;">
+            <svg width="76" height="71" viewBox="0 0 76 71" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="61.5" cy="36.5" r="13.5" style="stroke: var(--jp-ui-font-color2, #1D1D1D); fill: var(--jp-layout-color1, #F2F2F2);" stroke-width="2"/>
+                <circle cx="14.5" cy="14.5" r="13.5" style="stroke: var(--jp-ui-font-color2, #1D1D1D); fill: var(--jp-layout-color1, #F2F2F2);" stroke-width="2"/>
+                <circle cx="14.5" cy="56.5" r="13.5" style="stroke: var(--jp-ui-font-color2, #1D1D1D); fill: var(--jp-layout-color1, #F2F2F2);" stroke-width="2"/>
+                <path d="M28 16L30.5 16C33.2614 16 35.5 18.2386 35.5 21L35.5 32.0001C35.5 34.7615 37.7386 37.0001 40.5 37.0001L43 37.0001" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="1.5"/>
+                <path d="M40.5 37L40.5 37.75L40.5 37.75L40.5 37ZM35.5 42L36.25 42L35.5 42ZM35.5 52L34.75 52L35.5 52ZM30.5 57L30.5 57.75L30.5 57ZM41.5001 36.25L40.5 36.25L40.5 37.75L41.5001 37.75L41.5001 36.25ZM34.75 42L34.75 52L36.25 52L36.25 42L34.75 42ZM30.5 56.25L28.0001 56.25L28.0001 57.75L30.5 57.75L30.5 56.25ZM34.75 52C34.75 54.3472 32.8472 56.25 30.5 56.25L30.5 57.75C33.6756 57.75 36.25 55.1756 36.25 52L34.75 52ZM40.5 36.25C37.3244 36.25 34.75 38.8243 34.75 42L36.25 42C36.25 39.6528 38.1528 37.75 40.5 37.75L40.5 36.25Z" style="fill: var(--jp-ui-font-color2, #1D1D1D);"/>
+                <circle cx="28" cy="16" r="2.25" fill="#E5E5E5" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="1.5"/>
+                <circle cx="28" cy="57" r="2.25" fill="#E5E5E5" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="1.5"/>
+                <path d="M45.25 36.567C45.5833 36.7594 45.5833 37.2406 45.25 37.433L42.25 39.1651C41.9167 39.3575 41.5 39.117 41.5 38.7321V35.2679C41.5 34.883 41.9167 34.6425 42.25 34.8349L45.25 36.567Z" style="fill: var(--jp-ui-font-color2, #1D1D1D);"/>
+            </svg>
+        </div>
+        <div style="margin-left: 64px;">
+            <h3 style="margin-bottom: 0px;">HighLevelGraph</h3>
+            <p style="color: var(--jp-ui-font-color2, #5D5851); margin-bottom:0px;">
+                HighLevelGraph with 4 layers and 240 keys from all layers.
+            </p>
+            
+            <div style="">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
+        
+        <circle cx="16" cy="16" r="14" fill="#8F8F8F" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="2"/>
+        
+    </svg>
+
+    <details style="margin-left: 32px;">
+        <summary style="margin-bottom: 10px; margin-top: 10px;">
+            <h4 style="display: inline;">Layer1: normal</h4>
+        </summary>
+        <p style="color: var(--jp-ui-font-color2, #5D5851); margin: -0.25em 0px 0px 0px;">
+            normal-6ad96170c4c61710dbc18b74e58c3cb2
+        </p>
+
+        <table>
+        <tr>
+            <td>
+                <table>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">layer_type</th>
+                        <td style="text-align: left;">MaterializedLayer</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">is_materialized</th>
+                        <td style="text-align: left;">True</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">number of outputs</th>
+                        <td style="text-align: left;">100</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">shape</th>
+                        <td style="text-align: left;">(30000, 30000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">dtype</th>
+                        <td style="text-align: left;">float64</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunksize</th>
+                        <td style="text-align: left;">(3000, 3000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">type</th>
+                        <td style="text-align: left;">dask.array.core.Array</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunk_type</th>
+                        <td style="text-align: left;">numpy.ndarray</td>
+                    </tr>
+                
+                
+                </table>
+            </td>
+            <td>
+                <svg width="250" height="250" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="200" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="20" x2="200" y2="20" />
+  <line x1="0" y1="40" x2="200" y2="40" />
+  <line x1="0" y1="60" x2="200" y2="60" />
+  <line x1="0" y1="80" x2="200" y2="80" />
+  <line x1="0" y1="100" x2="200" y2="100" />
+  <line x1="0" y1="120" x2="200" y2="120" />
+  <line x1="0" y1="140" x2="200" y2="140" />
+  <line x1="0" y1="160" x2="200" y2="160" />
+  <line x1="0" y1="180" x2="200" y2="180" />
+  <line x1="0" y1="200" x2="200" y2="200" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="200" style="stroke-width:2" />
+  <line x1="20" y1="0" x2="20" y2="200" />
+  <line x1="40" y1="0" x2="40" y2="200" />
+  <line x1="60" y1="0" x2="60" y2="200" />
+  <line x1="80" y1="0" x2="80" y2="200" />
+  <line x1="100" y1="0" x2="100" y2="200" />
+  <line x1="120" y1="0" x2="120" y2="200" />
+  <line x1="140" y1="0" x2="140" y2="200" />
+  <line x1="160" y1="0" x2="160" y2="200" />
+  <line x1="180" y1="0" x2="180" y2="200" />
+  <line x1="200" y1="0" x2="200" y2="200" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 200.0,0.0 200.0,200.0 0.0,200.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="100.000000" y="220.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >30000</text>
+  <text x="220.000000" y="100.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,220.000000,100.000000)">30000</text>
+</svg>
+            </td>
+        </tr>
+        </table>
+
+    </details>
+</div>
+            
+            <div style="">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
+        
+        <circle cx="16" cy="16" r="14" fill="#8F8F8F" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="2"/>
+        
+    </svg>
+
+    <details style="margin-left: 32px;">
+        <summary style="margin-bottom: 10px; margin-top: 10px;">
+            <h4 style="display: inline;">Layer2: mean_chunk</h4>
+        </summary>
+        <p style="color: var(--jp-ui-font-color2, #5D5851); margin: -0.25em 0px 0px 0px;">
+            mean_chunk-1ccb39e699989873e56e0c577ab50469
+        </p>
+
+        <table>
+        <tr>
+            <td>
+                <table>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">layer_type</th>
+                        <td style="text-align: left;">Blockwise</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">is_materialized</th>
+                        <td style="text-align: left;">True</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">number of outputs</th>
+                        <td style="text-align: left;">100</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">shape</th>
+                        <td style="text-align: left;">(30000, 30000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">dtype</th>
+                        <td style="text-align: left;">float64</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunksize</th>
+                        <td style="text-align: left;">(3000, 3000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">type</th>
+                        <td style="text-align: left;">dask.array.core.Array</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunk_type</th>
+                        <td style="text-align: left;">numpy.ndarray</td>
+                    </tr>
+                
+                
+                    
+                        <tr>
+                            <th style="text-align: left; width: 150px;"> depends on </th>
+                            <td style="text-align: left;">normal-6ad96170c4c61710dbc18b74e58c3cb2</td>
+                        </tr>
+                    
+                
+                </table>
+            </td>
+            <td>
+                <svg width="250" height="250" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="200" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="20" x2="200" y2="20" />
+  <line x1="0" y1="40" x2="200" y2="40" />
+  <line x1="0" y1="60" x2="200" y2="60" />
+  <line x1="0" y1="80" x2="200" y2="80" />
+  <line x1="0" y1="100" x2="200" y2="100" />
+  <line x1="0" y1="120" x2="200" y2="120" />
+  <line x1="0" y1="140" x2="200" y2="140" />
+  <line x1="0" y1="160" x2="200" y2="160" />
+  <line x1="0" y1="180" x2="200" y2="180" />
+  <line x1="0" y1="200" x2="200" y2="200" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="200" style="stroke-width:2" />
+  <line x1="20" y1="0" x2="20" y2="200" />
+  <line x1="40" y1="0" x2="40" y2="200" />
+  <line x1="60" y1="0" x2="60" y2="200" />
+  <line x1="80" y1="0" x2="80" y2="200" />
+  <line x1="100" y1="0" x2="100" y2="200" />
+  <line x1="120" y1="0" x2="120" y2="200" />
+  <line x1="140" y1="0" x2="140" y2="200" />
+  <line x1="160" y1="0" x2="160" y2="200" />
+  <line x1="180" y1="0" x2="180" y2="200" />
+  <line x1="200" y1="0" x2="200" y2="200" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 200.0,0.0 200.0,200.0 0.0,200.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="100.000000" y="220.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >30000</text>
+  <text x="220.000000" y="100.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,220.000000,100.000000)">30000</text>
+</svg>
+            </td>
+        </tr>
+        </table>
+
+    </details>
+</div>
+            
+            <div style="">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
+        
+        <circle cx="16" cy="16" r="14" fill="#8F8F8F" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="2"/>
+        
+    </svg>
+
+    <details style="margin-left: 32px;">
+        <summary style="margin-bottom: 10px; margin-top: 10px;">
+            <h4 style="display: inline;">Layer3: mean_combine-partial</h4>
+        </summary>
+        <p style="color: var(--jp-ui-font-color2, #5D5851); margin: -0.25em 0px 0px 0px;">
+            mean_combine-partial-9d7408b2918b12ded83c71dd3ff57f3e
+        </p>
+
+        <table>
+        <tr>
+            <td>
+                <table>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">layer_type</th>
+                        <td style="text-align: left;">MaterializedLayer</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">is_materialized</th>
+                        <td style="text-align: left;">True</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">number of outputs</th>
+                        <td style="text-align: left;">30</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">shape</th>
+                        <td style="text-align: left;">(3, 30000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">dtype</th>
+                        <td style="text-align: left;">float64</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunksize</th>
+                        <td style="text-align: left;">(1, 3000)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">type</th>
+                        <td style="text-align: left;">dask.array.core.Array</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunk_type</th>
+                        <td style="text-align: left;">numpy.ndarray</td>
+                    </tr>
+                
+                
+                    
+                        <tr>
+                            <th style="text-align: left; width: 150px;"> depends on </th>
+                            <td style="text-align: left;">mean_chunk-1ccb39e699989873e56e0c577ab50469</td>
+                        </tr>
+                    
+                
+                </table>
+            </td>
+            <td>
+                <svg width="250" height="92" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="200" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="14" x2="200" y2="14" />
+  <line x1="0" y1="28" x2="200" y2="28" />
+  <line x1="0" y1="42" x2="200" y2="42" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="42" style="stroke-width:2" />
+  <line x1="20" y1="0" x2="20" y2="42" />
+  <line x1="40" y1="0" x2="40" y2="42" />
+  <line x1="60" y1="0" x2="60" y2="42" />
+  <line x1="80" y1="0" x2="80" y2="42" />
+  <line x1="100" y1="0" x2="100" y2="42" />
+  <line x1="120" y1="0" x2="120" y2="42" />
+  <line x1="140" y1="0" x2="140" y2="42" />
+  <line x1="160" y1="0" x2="160" y2="42" />
+  <line x1="180" y1="0" x2="180" y2="42" />
+  <line x1="200" y1="0" x2="200" y2="42" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 200.0,0.0 200.0,42.354360857637474 0.0,42.354360857637474" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="100.000000" y="62.354361" font-size="1.0rem" font-weight="100" text-anchor="middle" >30000</text>
+  <text x="220.000000" y="21.177180" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,220.000000,21.177180)">3</text>
+</svg>
+            </td>
+        </tr>
+        </table>
+
+    </details>
+</div>
+            
+            <div style="">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute;">
+        
+        <circle cx="16" cy="16" r="14" fill="#8F8F8F" style="stroke: var(--jp-ui-font-color2, #1D1D1D);" stroke-width="2"/>
+        
+    </svg>
+
+    <details style="margin-left: 32px;">
+        <summary style="margin-bottom: 10px; margin-top: 10px;">
+            <h4 style="display: inline;">Layer4: mean_agg-aggregate</h4>
+        </summary>
+        <p style="color: var(--jp-ui-font-color2, #5D5851); margin: -0.25em 0px 0px 0px;">
+            mean_agg-aggregate-8bc993aec3b4d7a1fc433f965f460473
+        </p>
+
+        <table>
+        <tr>
+            <td>
+                <table>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">layer_type</th>
+                        <td style="text-align: left;">MaterializedLayer</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">is_materialized</th>
+                        <td style="text-align: left;">True</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">number of outputs</th>
+                        <td style="text-align: left;">10</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">shape</th>
+                        <td style="text-align: left;">(30000,)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">dtype</th>
+                        <td style="text-align: left;">float64</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunksize</th>
+                        <td style="text-align: left;">(3000,)</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">type</th>
+                        <td style="text-align: left;">dask.array.core.Array</td>
+                    </tr>
+                
+                    <tr>
+                        <th style="text-align: left; width: 150px;">chunk_type</th>
+                        <td style="text-align: left;">numpy.ndarray</td>
+                    </tr>
+                
+                
+                    
+                        <tr>
+                            <th style="text-align: left; width: 150px;"> depends on </th>
+                            <td style="text-align: left;">mean_combine-partial-9d7408b2918b12ded83c71dd3ff57f3e</td>
+                        </tr>
+                    
+                
+                </table>
+            </td>
+            <td>
+                <svg width="250" height="92" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="200" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="42" x2="200" y2="42" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="42" style="stroke-width:2" />
+  <line x1="20" y1="0" x2="20" y2="42" />
+  <line x1="40" y1="0" x2="40" y2="42" />
+  <line x1="60" y1="0" x2="60" y2="42" />
+  <line x1="80" y1="0" x2="80" y2="42" />
+  <line x1="100" y1="0" x2="100" y2="42" />
+  <line x1="120" y1="0" x2="120" y2="42" />
+  <line x1="140" y1="0" x2="140" y2="42" />
+  <line x1="160" y1="0" x2="160" y2="42" />
+  <line x1="180" y1="0" x2="180" y2="42" />
+  <line x1="200" y1="0" x2="200" y2="42" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 200.0,0.0 200.0,42.354360857637474 0.0,42.354360857637474" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="100.000000" y="62.354361" font-size="1.0rem" font-weight="100" text-anchor="middle" >30000</text>
+  <text x="220.000000" y="21.177180" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,220.000000,21.177180)">1</text>
+</svg>
+            </td>
+        </tr>
+        </table>
+
+    </details>
+</div>
+            
+        </div>
+    </div>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yd</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 234.38 kiB </td>
+                        <td> 23.44 kiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (30000,) </td>
+                        <td> (3000,) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 4 Graph Layers </td>
+                        <td> 10 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="170" height="75" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="25" x2="120" y2="25" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="25" style="stroke-width:2" />
+  <line x1="12" y1="0" x2="12" y2="25" />
+  <line x1="24" y1="0" x2="24" y2="25" />
+  <line x1="36" y1="0" x2="36" y2="25" />
+  <line x1="48" y1="0" x2="48" y2="25" />
+  <line x1="60" y1="0" x2="60" y2="25" />
+  <line x1="72" y1="0" x2="72" y2="25" />
+  <line x1="84" y1="0" x2="84" y2="25" />
+  <line x1="96" y1="0" x2="96" y2="25" />
+  <line x1="108" y1="0" x2="108" y2="25" />
+  <line x1="120" y1="0" x2="120" y2="25" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,25.412616514582485 0.0,25.412616514582485" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.000000" y="45.412617" font-size="1.0rem" font-weight="100" text-anchor="middle" >30000</text>
+  <text x="140.000000" y="12.706308" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,12.706308)">1</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<ul class="simple">
+<li><p>Notice how <code class="docutils literal notranslate"><span class="pre">sync</span></code> scheduler takes almost the same time as pure NumPy code.</p></li>
+<li><p>Why is the multiprocessing scheduler so much slower?</p></li>
+</ul>
+<p>If you use the multiprocessing backend, all communication between processes still needs to pass through the main process because processes are isolated from other processes. This introduces a large overhead.</p>
+<p><strong>The Dask developers recommend using the Dask Distributed Scheduler which we will cover now.</strong></p>
+</section>
+<section id="distributed-scheduler">
+<h3>2. Distributed scheduler<a class="headerlink" href="#distributed-scheduler" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The Distributed scheduler or <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> schedules tasks and manages the execution of those tasks on workers from a single or multiple machines.</p></li>
+<li><p>This scheduler is more sophisticated and offers more features including a live diagnostic dashboard which provides live insight on performance and progress of the calculations.</p></li>
+</ul>
+<p>In most cases, <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> is preferred since it is very scalable, and provides and informative interactive dashboard and access to more complex Dask collections such as <code class="docutils literal notranslate"><span class="pre">futures</span></code>.</p>
+<section id="local-cluster">
+<h4>2.1. Local Cluster<a class="headerlink" href="#local-cluster" title="Permalink to this heading">#</a></h4>
+<p>A Dask Local Cluster refers to a group of worker processes that run on a single machine and are managed by a single Dask scheduler.</p>
+<p>This is useful for situations where the computational requirements are not large enough to warrant the use of a full cluster of separate machines. It provides an easy way to run parallel computations on a single machine, without the need for complex cluster management or other infrastructure.</p>
+<section id="let-s-start-by-creating-a-local-cluster">
+<h5>Let’s start by creating a Local Cluster<a class="headerlink" href="#let-s-start-by-creating-a-local-cluster" title="Permalink to this heading">#</a></h5>
+<p>For this we need to set up a <code class="docutils literal notranslate"><span class="pre">LocalCluster</span></code> using <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> and connect a <code class="docutils literal notranslate"><span class="pre">client</span></code> to it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">LocalCluster</span><span class="p">,</span> <span class="n">Client</span>
+
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">()</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">client</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;"> </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px;">Client</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">Client-528e046a-a5a4-11ed-928c-3cecef1b11fa</p>
+        <table style="width: 100%; text-align: left;">
+
+        <tr>
+        
+            <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
+            <td style="text-align: left;"><strong>Cluster type:</strong> distributed.LocalCluster</td>
+        
+        </tr>
+
+        
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status</a>
+                </td>
+                <td style="text-align: left;"></td>
+            </tr>
+        
+
+        </table>
+
+        
+            <details>
+            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
+            <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-mod-trusted jp-OutputArea-output">
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;">
+    </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px; margin-top: 0px;">LocalCluster</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">ecdf1399</p>
+        <table style="width: 100%; text-align: left;">
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status</a>
+                </td>
+                <td style="text-align: left;">
+                    <strong>Workers:</strong> 4
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Total threads:</strong> 4
+                </td>
+                <td style="text-align: left;">
+                    <strong>Total memory:</strong> 16.00 GiB
+                </td>
+            </tr>
+            
+            <tr>
+    <td style="text-align: left;"><strong>Status:</strong> running</td>
+    <td style="text-align: left;"><strong>Using processes:</strong> True</td>
+</tr>
+
+            
+        </table>
+
+        <details>
+            <summary style="margin-bottom: 20px;">
+                <h3 style="display: inline;">Scheduler Info</h3>
+            </summary>
+
+            <div style="">
+    <div>
+        <div style="width: 24px; height: 24px; background-color: #FFF7E5; border: 3px solid #FF6132; border-radius: 5px; position: absolute;"> </div>
+        <div style="margin-left: 48px;">
+            <h3 style="margin-bottom: 0px;">Scheduler</h3>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-680550a6-4f52-4d2d-99d6-6adbb921c7c9</p>
+            <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Comm:</strong> tcp://127.0.0.1:46436
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Workers:</strong> 4
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status</a>
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total threads:</strong> 4
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Started:</strong> Just now
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total memory:</strong> 16.00 GiB
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <details style="margin-left: 48px;">
+        <summary style="margin-bottom: 20px;">
+            <h3 style="display: inline;">Workers</h3>
+        </summary>
+
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 0</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:45124
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/39912/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/39912/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 4.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:42313
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-qsda33zu
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 1</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:38609
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/42328/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/42328/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 4.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:41562
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-cpl_hk52
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 2</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:43616
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/44797/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/44797/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 4.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:40001
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-qnoend2w
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 3</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:40873
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/40512/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/40512/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 4.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:36033
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-0sqdrcdn
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+
+    </details>
+</div>
+
+        </details>
+    </div>
+</div>
+            </details>
+        
+
+    </div>
+</div></div></div>
+</div>
+<p>☝️ Click the Dashboard link above.</p>
+<p>👈 Or click the “Search” 🔍 button in the dask-labextension dashboard.</p>
+<p>If no arguments are specified in <code class="docutils literal notranslate"><span class="pre">LocalCluster</span></code> it will automatically detect the number of CPU cores your system has and the amount of memory and create workers to appropriately fill that.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">LocalCluster</span></code> will use the full resources of the current JupyterLab session.  For example, if you used NCAR JupyterHub, it will use the number of CPUs selected.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">LocalCluster()</span></code> takes a lot of optional arguments, allowing you to configure the number of processes/threads, memory limits and other settings.</p>
+<p>You can also find your cluster dashboard link using :</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">dashboard_link</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;https://jupyterhub.hpc.ucar.edu/stable/user/negins/casper_16_4/proxy/8787/status&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># -- dask array using the default</span>
+<span class="n">xd</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">30_000</span><span class="p">,</span> <span class="mi">30_000</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">))</span>
+<span class="n">yd</span> <span class="o">=</span> <span class="n">xd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">yd</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 499 ms, sys: 142 ms, total: 641 ms
+Wall time: 10.1 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([10.00024901, 10.00025024, 10.00001342, ..., 10.00006029,
+        9.99957823, 10.00021491])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Always remember to close your local Dask cluster:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="dask-distributed-cluster">
+<h3>Dask Distributed (Cluster)<a class="headerlink" href="#dask-distributed-cluster" title="Permalink to this heading">#</a></h3>
+<p>So far we have talked about running a job on a local machine.</p>
+<p>Dask can be deployed on distributed infrastructure, such as a an HPC system or a cloud computing system.</p>
+<p>Dask Clusters have different names corresponding to different computing environments. Some examples are <code class="docutils literal notranslate"><span class="pre">dask-jobqueue</span></code> for your HPC systems (including <code class="docutils literal notranslate"><span class="pre">PBSCluster</span></code>) or Kubernetes Cluster for machines on the Cloud.</p>
+<p>In section 5, we will talk more about Dask on HPC Systems.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "npl-2023a"
+        },
+        kernelOptions: {
+            name: "npl-2023a",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'npl-2023a'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03-dask-xarray.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Parallelizing Xarray with Dask</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05-dask-hpc.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dask on HPC - Starting Clusters, Monitoring, and Debugging</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-learn">In this tutorial, you learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dask-scheduler-our-task-orchestrator">The Dask scheduler - our task orchestrator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schedulers">Schedulers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-machine-scheduler">1. Single machine scheduler</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-threaded-scheduler">1.1. Single-threaded scheduler</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#threaded-scheduler">1.2. Threaded scheduler</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-clusters">Distributed Clusters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-scheduler">2. Distributed scheduler</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#local-cluster">2.1. Local Cluster</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#let-s-start-by-creating-a-local-cluster">Let’s start by creating a Local Cluster</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-distributed-cluster">Dask Distributed (Cluster)</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

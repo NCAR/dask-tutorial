@@ -1,0 +1,1917 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Dask Arrays &#8212; Dask Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01-dask-array';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dask DataFrame" href="02-dask-dataframe.html" />
+    <link rel="prev" title="Dask Overview" href="00-dask-overview.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/NCAR_CISL_logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/NCAR_CISL_logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    NCAR Dask Tutorial
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductions to Dask</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00-dask-overview.html">Dask Overview</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Dask Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-dask-dataframe.html">Dask DataFrame</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask and Xarray</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03-dask-xarray.html">Parallelizing Xarray with Dask</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask on HPC</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04-dask-cluster.html">Dask Schedulers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-dask-hpc.html">Dask on HPC - Starting Clusters, Monitoring, and Debugging</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask Best Practices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06-dask-chunking.html">Dask Chunking - Best Practices</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NCAR/dask-tutorial/main?urlpath=lab/tree/notebooks/01-dask-array.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://jupyterhub.hpc.ucar.edu/stable/hub/user-redirect/git-pull?repo=https%3A//github.com/NCAR/dask-tutorial&urlpath=lab/tree/dask-tutorial/notebooks/01-dask-array.ipynb&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/edit/main/notebooks/01-dask-array.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2Fnotebooks/01-dask-array.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/01-dask-array.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dask Arrays</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-learn">In this tutorial, you learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Dask Arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-start-a-dask-client">Setup: Start a Dask Client</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blocked-algorithms">Blocked Algorithms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-graph">Task Graph</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunks">Chunks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chunking-an-array">Chunking an array</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-comparison">Performance Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#larger-data">Larger Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supplementary-material-rechunking-arrays">Supplementary Material: Rechunking Arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resources-and-references">Resources and references</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/NCAR-contemp-logo-blue.png"
+     width="750px"
+     alt="NCAR logo"
+     style="vertical-align:middle;margin:30px 0px"/></p>
+<section class="tex2jax_ignore mathjax_ignore" id="dask-arrays">
+<h1>Dask Arrays<a class="headerlink" href="#dask-arrays" title="Permalink to this heading">#</a></h1>
+<p><strong>ESDS Dask Tutorial | 06 February, 2023</strong></p>
+<p>Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk<br />
+Computational &amp; Information Systems Lab (CISL)<br />
+<a class="reference external" href="mailto:negins&#37;&#52;&#48;ucar&#46;edu">negins<span>&#64;</span>ucar<span>&#46;</span>edu</a>, <a class="reference external" href="mailto:vanderwb&#37;&#52;&#48;ucar&#46;edu">vanderwb<span>&#64;</span>ucar<span>&#46;</span>edu</a></p>
+<hr class="docutils" />
+<section id="in-this-tutorial-you-learn">
+<h2>In this tutorial, you learn:<a class="headerlink" href="#in-this-tutorial-you-learn" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>What is a Dask Array?</p></li>
+<li><p>Basic concepts and features of Dask Arrays</p></li>
+<li><p>Working with Dask arrays</p></li>
+</ul>
+<p><strong>Related Dask Array Documentation</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.dask.org/en/latest/array.html">Dask Array documentation</a></p></li>
+<li><p><a class="reference external" href="https://docs.dask.org/en/latest/array-api.html">Dask Array API</a></p></li>
+<li><p><a class="reference external" href="https://examples.dask.org/array.html">Dask Array examples</a></p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Dask Arrays<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<p>Dask Arrays are basically parallelized version of NumPy arrays for processing <em>larger-than-memory data sets</em>.</p>
+<img src="https://docs.dask.org/en/stable/_images/dask-array.svg" width="500px" style="horizontal-align:middle"/>
+<p><em>Image credit: Anaconda, Inc. and contributors</em></p>
+<p>Dask Array can be used as a drop-in replacement for NumPy arrays, with a similar API and support for a subset of NumPy functions.</p>
+<p>Dask effectively reduces the memory footprint of large array computations by dividing the arrays into smaller pieces (called <strong>chunks</strong>) that can fit into memory and stream the data from disk.</p>
+<p><strong>Dask Arrays are lazy:</strong> Unlike Numpy, operations on Dask arrays are not computed until you explicitly request them.</p>
+<div class="alert alert-success" markdown="1">
+<p><b>Lazy Evaluation: objects are evaluated just in time when the results are needed!</b></p>
+<p>Lazy evaluation help us avoid having large pieces of memory resident on the workers and optimize the resource requirements.</p>
+</div>
+<p>Dask Arrays don’t directly hold any data. Instead, they provide <strong>a symbolic representation of the necessary computations</strong> to generate the data. We will explain this more below.</p>
+<p>Let’s start exploring Dask Arrays:</p>
+</section>
+<section id="setup-start-a-dask-client">
+<h2>Setup: Start a Dask Client<a class="headerlink" href="#setup-start-a-dask-client" title="Permalink to this heading">#</a></h2>
+<p>We will talk in-depth about Dask Cluster and Dask Clients later in this tutorial. Here we just created a local cluster and attached a client to it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+<span class="n">client</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-02-05 04:50:35,773 - distributed.diskutils - INFO - Found stale lock file and directory &#39;/glade/scratch/negins/dask-worker-space/worker-bg_qbe63&#39;, purging
+2023-02-05 04:50:35,774 - distributed.diskutils - INFO - Found stale lock file and directory &#39;/glade/scratch/negins/dask-worker-space/worker-ho0r8zk1&#39;, purging
+2023-02-05 04:50:35,774 - distributed.diskutils - INFO - Found stale lock file and directory &#39;/glade/scratch/negins/dask-worker-space/worker-kxd0lb09&#39;, purging
+2023-02-05 04:50:35,775 - distributed.diskutils - INFO - Found stale lock file and directory &#39;/glade/scratch/negins/dask-worker-space/worker-z8ju1jdf&#39;, purging
+</pre></div>
+</div>
+<div class="output text_html"><div>
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;"> </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px;">Client</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">Client-4cd05c6b-a54b-11ed-9919-3cecef1b11d4</p>
+        <table style="width: 100%; text-align: left;">
+
+        <tr>
+        
+            <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
+            <td style="text-align: left;"><strong>Cluster type:</strong> distributed.LocalCluster</td>
+        
+        </tr>
+
+        
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status</a>
+                </td>
+                <td style="text-align: left;"></td>
+            </tr>
+        
+
+        </table>
+
+        
+            <details>
+            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
+            <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-mod-trusted jp-OutputArea-output">
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;">
+    </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px; margin-top: 0px;">LocalCluster</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">97113af0</p>
+        <table style="width: 100%; text-align: left;">
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status</a>
+                </td>
+                <td style="text-align: left;">
+                    <strong>Workers:</strong> 4
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Total threads:</strong> 4
+                </td>
+                <td style="text-align: left;">
+                    <strong>Total memory:</strong> 4.00 GiB
+                </td>
+            </tr>
+            
+            <tr>
+    <td style="text-align: left;"><strong>Status:</strong> running</td>
+    <td style="text-align: left;"><strong>Using processes:</strong> True</td>
+</tr>
+
+            
+        </table>
+
+        <details>
+            <summary style="margin-bottom: 20px;">
+                <h3 style="display: inline;">Scheduler Info</h3>
+            </summary>
+
+            <div style="">
+    <div>
+        <div style="width: 24px; height: 24px; background-color: #FFF7E5; border: 3px solid #FF6132; border-radius: 5px; position: absolute;"> </div>
+        <div style="margin-left: 48px;">
+            <h3 style="margin-bottom: 0px;">Scheduler</h3>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-28250e47-a26c-4ceb-bad2-b51421b5966d</p>
+            <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Comm:</strong> tcp://127.0.0.1:44858
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Workers:</strong> 4
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/8787/status</a>
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total threads:</strong> 4
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Started:</strong> Just now
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total memory:</strong> 4.00 GiB
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <details style="margin-left: 48px;">
+        <summary style="margin-bottom: 20px;">
+            <h3 style="display: inline;">Workers</h3>
+        </summary>
+
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 0</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:38575
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/39928/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/39928/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 1.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:39509
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-n9bsox6p
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 1</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:42195
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/37465/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/37465/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 1.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:39740
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-nj7b741v
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 2</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:45658
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/38928/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/38928/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 1.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:45060
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-zmfem11t
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <div style="width: 24px; height: 24px; background-color: #DBF5FF; border: 3px solid #4CC9FF; border-radius: 5px; position: absolute;"> </div>
+            <div style="margin-left: 48px;">
+            <details>
+                <summary>
+                    <h4 style="margin-bottom: 0px; display: inline;">Worker: 3</h4>
+                </summary>
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Comm: </strong> tcp://127.0.0.1:42021
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Total threads: </strong> 1
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/33016/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/negins/proxy/33016/status</a>
+                        </td>
+                        <td style="text-align: left;">
+                            <strong>Memory: </strong> 1.00 GiB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <strong>Nanny: </strong> tcp://127.0.0.1:38124
+                        </td>
+                        <td style="text-align: left;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left;">
+                            <strong>Local directory: </strong> /glade/scratch/negins/dask-worker-space/worker-0r7vrq9y
+                        </td>
+                    </tr>
+
+                    
+
+                    
+
+                </table>
+            </details>
+            </div>
+        </div>
+        
+
+    </details>
+</div>
+
+        </details>
+    </div>
+</div>
+            </details>
+        
+
+    </div>
+</div></div></div>
+</div>
+</section>
+<section id="blocked-algorithms">
+<h2>Blocked Algorithms<a class="headerlink" href="#blocked-algorithms" title="Permalink to this heading">#</a></h2>
+<p>Dask Arrays use blocked algorithms to split large computations into smaller computations which operate on subsets of the data (called <strong>chunks</strong>).</p>
+<p>Let’s see what this means in an example:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+
+<span class="c1"># A 4x4 numpy array that goes from 1 to 16 </span>
+
+<span class="n">narr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">8</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+        <span class="p">])</span>
+
+<span class="c1"># -- convert numpy array to dask array with 4 chunks</span>
+<span class="n">darr</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span> <span class="n">narr</span><span class="p">,</span><span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can calculate the sum of this array using <code class="docutils literal notranslate"><span class="pre">darr.sum()</span></code> similar to numpy. <strong>But how is it different from numpy?</strong></p>
+<p>When you take the sum of the Dask array, Dask first takes the sum of each chunk and only after each of those is completed, takes the sum of the results from each chunk.</p>
+<img src="https://d33wubrfki0l68.cloudfront.net/f7bf6ca40c8f217386f83795b36e0c964c6a9d2b/ad6da/images/blog/what-is-dask-blockwise-sum.jpg" width="500px" />
+<p><em>Image adapted from <a class="reference external" href="http://saturncloud.io">saturncloud.io</a></em></p>
+</section>
+<section id="task-graph">
+<h2>Task Graph<a class="headerlink" href="#task-graph" title="Permalink to this heading">#</a></h2>
+<p>The Dask Task Graph serves as a <strong>blueprint</strong> for executing the computations.</p>
+<p>The Task Graph defines the (1) relationships between tasks, and (2) the order in which they should be executed.</p>
+<p>In a task graph each node in the graph represents a task and lines represent the dependencies/relationships between tasks.</p>
+<p>We can visualize the low-level task graph using <code class="docutils literal notranslate"><span class="pre">.visualize()</span></code> method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">darr</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">rankdir</span><span class="o">=</span><span class="s2">&quot;LR&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e7d72bb52ee75910a6378b378b74bf71649eaf33a960c84f62f0ddf391effa0b.png" src="../_images/e7d72bb52ee75910a6378b378b74bf71649eaf33a960c84f62f0ddf391effa0b.png" />
+</div>
+</div>
+<p>It is generally good practice to look at the task graph before executing the computation. By looking at the task graph, you can learn about potential bottlenecks where parallelism is not possible.</p>
+<div class="alert alert-block alert-info" markdown="1">
+<p><b>TIP:</b> For big computations, low-level task graphs gets very confusing. An alternative that provides a more concise graph is using <code class="docutils literal notranslate"><span class="pre">.dask.visualize()</span></code>.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#darr.sum().dask.visualize()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<p>Now, let’s start with another example. Here we create a 2D array of ones using NumPy.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span><span class="mi">12000</span><span class="p">)</span>
+
+<span class="n">ones_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">ones_np</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[1., 1., 1., ..., 1., 1., 1.],
+       [1., 1., 1., ..., 1., 1., 1.],
+       [1., 1., 1., ..., 1., 1., 1.],
+       ...,
+       [1., 1., 1., ..., 1., 1., 1.],
+       [1., 1., 1., ..., 1., 1., 1.],
+       [1., 1., 1., ..., 1., 1., 1.]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, let’s create the same array using Dask:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ones_da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">ones_da</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 915.53 MiB </td>
+                        <td> 76.29 MiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (10000, 12000) </td>
+                        <td> (2500, 4000) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 12 Tasks </td>
+                        <td> 12 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="170" height="150" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="25" x2="120" y2="25" />
+  <line x1="0" y1="50" x2="120" y2="50" />
+  <line x1="0" y1="75" x2="120" y2="75" />
+  <line x1="0" y1="100" x2="120" y2="100" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="100" style="stroke-width:2" />
+  <line x1="40" y1="0" x2="40" y2="100" />
+  <line x1="80" y1="0" x2="80" y2="100" />
+  <line x1="120" y1="0" x2="120" y2="100" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,100.0 0.0,100.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.000000" y="120.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >12000</text>
+  <text x="140.000000" y="50.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,140.000000,50.000000)">10000</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<p>We see a Dask Array representation of the data.
+This is a symbolic representation; no data has actually been generated yet.</p>
+<p>As we discussed previously, this mode of operation is called “lazy”.</p>
+<p>This allows the user to build up a series of computations or tasks before being passed to the scheduler for execution.</p>
+</section>
+<section id="chunks">
+<h2>Chunks<a class="headerlink" href="#chunks" title="Permalink to this heading">#</a></h2>
+<p>When checking the Dask array, the symbolic representation illustrates the concept of chunks. Dask arrays split the data into <strong>sub-arrays</strong> (or <strong>chunks</strong>) to optimize computation with large arrays.</p>
+<section id="chunking-an-array">
+<h3>Chunking an array<a class="headerlink" href="#chunking-an-array" title="Permalink to this heading">#</a></h3>
+<p><strong>The way that arrays are chunked can significantly affect total performance.</strong></p>
+<p>For specifying the chunking of an array, we use the <code class="docutils literal notranslate"><span class="pre">chunks</span></code> argument when creating our <code class="docutils literal notranslate"><span class="pre">dask.array</span></code>.</p>
+<div class="alert alert-block alert-warning">
+<p><b>⚠️ WARNING:</b> Please note that <code class="docutils literal notranslate"><span class="pre">chunks</span></code> argument stands for <strong>chunk shape</strong> rather than “number of chunks”.<br />
+For example, <code class="docutils literal notranslate"><span class="pre">chunks=1</span></code> means that you will have several chunks with one element.</p>
+</div>
+<p>There are several ways to define <code class="docutils literal notranslate"><span class="pre">chunks</span></code>. For example:</p>
+<ol class="arabic simple">
+<li><p>A uniform dimension size like 1000, meaning chunks of size 1000 in each dimension.</p></li>
+<li><p>A uniform chunk shape like <code class="docutils literal notranslate"><span class="pre">(1000,</span> <span class="pre">2000,</span> <span class="pre">3000)</span></code>, meaning chunks of size 1000 in the first axis, 2000 in the second axis, and 3000 in the third.</p></li>
+<li><p>Fully explicit sizes of all blocks for all dimensions, like <code class="docutils literal notranslate"><span class="pre">((1000,</span> <span class="pre">1000,</span> <span class="pre">500),</span> <span class="pre">(400,</span> <span class="pre">400),</span> <span class="pre">(5,</span> <span class="pre">5,</span> <span class="pre">5,</span> <span class="pre">5,</span> <span class="pre">5))</span></code></p></li>
+<li><p>A dictionary specifying chunk size per dimension like <code class="docutils literal notranslate"><span class="pre">{0:</span> <span class="pre">1000,</span> <span class="pre">1:</span> <span class="pre">2000,</span> <span class="pre">2:</span> <span class="pre">3000}</span></code>.</p></li>
+</ol>
+<p>Let’s recreate the above Dask array, but this time we will specify chunk sizes (a.k.a. shapes) using the argument <code class="docutils literal notranslate"><span class="pre">chunks</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- remember what the shape of our data array was</span>
+<span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(10000, 12000)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a dask array with 6 chunks</span>
+<span class="n">chunk_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span><span class="mi">4000</span><span class="p">)</span>
+<span class="n">ones_da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="n">chunks</span><span class="o">=</span><span class="n">chunk_shape</span><span class="p">)</span>
+<span class="n">ones_da</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 915.53 MiB </td>
+                        <td> 152.59 MiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (10000, 12000) </td>
+                        <td> (5000, 4000) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 6 Tasks </td>
+                        <td> 6 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="170" height="150" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="50" x2="120" y2="50" />
+  <line x1="0" y1="100" x2="120" y2="100" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="100" style="stroke-width:2" />
+  <line x1="40" y1="0" x2="40" y2="100" />
+  <line x1="80" y1="0" x2="80" y2="100" />
+  <line x1="120" y1="0" x2="120" y2="100" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,100.0 0.0,100.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.000000" y="120.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >12000</text>
+  <text x="140.000000" y="50.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,140.000000,50.000000)">10000</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<p>You can see in the above dask array representation that we now have 6 chunks, each of shape (5000,4000) and size of ~ 160.0 MiB.</p>
+</section>
+</section>
+<section id="performance-comparison">
+<h2>Performance Comparison<a class="headerlink" href="#performance-comparison" title="Permalink to this heading">#</a></h2>
+<p>To compare the performance between a NumPy array and an equivalent Dask array, let’s calculate the mean.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># The %%time cell magic measures the execution time of the whole cell</span>
+<span class="n">ones_np</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 80.2 ms, sys: 570 µs, total: 80.8 ms
+Wall time: 77.8 ms
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Remember, we are not doing any computation here, just constructing our task graph</span>
+<span class="n">mean_of_ones_da</span> <span class="o">=</span> <span class="n">ones_da</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 144 µs, sys: 1.07 ms, total: 1.22 ms
+Wall time: 1.21 ms
+</pre></div>
+</div>
+</div>
+</div>
+<p>Remember :</p>
+<blockquote>
+<div><p><em>Dask doesn’t do anything until you tell it… It is lazy!</em></p>
+</div></blockquote>
+<p>So far we have just constructed our task graph but no computations yet!</p>
+<div class="alert alert-success" markdown="1">
+<p><b>NOTE:</b> In order to generate the data, we need to call the <code class="docutils literal notranslate"><span class="pre">.compute()</span></code> method on the Dask Array to trigger our computation.</p>
+</div>
+<p>Let’s run the <code class="docutils literal notranslate"><span class="pre">.compute()</span></code> method to see how this works:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">mean_of_ones_da</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 16 ms, sys: 1.01 ms, total: 17 ms
+Wall time: 31.4 ms
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.compute()</span></code> method convertes Dask Arrays to Numpy Arrays. Let’s check to see if this is true:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span> <span class="p">(</span><span class="n">ones_da</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>numpy.ndarray
+</pre></div>
+</div>
+</div>
+</div>
+<div class="alert alert-block alert-warning" markdown="1">
+<p><b>WARNING:</b> Typically, when working with Dask arrays, we do not want to generate the data right away by calling <code class="docutils literal notranslate"><span class="pre">.compute()</span></code> on a large array.</p>
+</div>
+<p>We usually want to perform some computations that reduce the data size. For example, we might compute statistics like the mean or standard deviation.</p>
+<p>Let’s look at an example of taking the mean and visualize the task graph. Remember, that no actual computation is taking place until we call <code class="docutils literal notranslate"><span class="pre">.compute()</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_of_ones_da</span> <span class="o">=</span> <span class="n">ones_da</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">mean_of_ones_da</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">rankdir</span><span class="o">=</span><span class="s2">&quot;LR&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/3b88c63f7522ba8351f3eb1f6459fc4d8fbbb4f012e73f284465f837a858e6a0.png" src="../_images/3b88c63f7522ba8351f3eb1f6459fc4d8fbbb4f012e73f284465f837a858e6a0.png" />
+</div>
+</div>
+<hr class="docutils" />
+<p>What are the sizes of these arrays in memory?</p>
+<p>First, let’s define a function that returns array size in MiB.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># Define function to display variable size in MiB</span>
+<span class="k">def</span> <span class="nf">var_size</span><span class="p">(</span><span class="n">in_var</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">in_var</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Shape of the numpy array : &quot;</span><span class="p">,</span> <span class="n">ones_np</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Shape of the dask array  : &quot;</span><span class="p">,</span> <span class="n">ones_da</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> 
+
+<span class="c1"># memory size of numpy array in MiB</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory size of numpy array in MB : </span><span class="si">{</span><span class="n">var_size</span><span class="p">(</span><span class="n">ones_np</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MiB&quot;</span><span class="p">)</span>
+<span class="c1"># memory size of dask array in MiB</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory size of dask array in MB  : </span><span class="si">{</span><span class="n">var_size</span><span class="p">(</span><span class="n">ones_da</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MiB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Shape of the numpy array :  (10000, 12000)
+Shape of the dask array  :  (10000, 12000)
+Memory size of numpy array in MB : 915.53 MiB
+Memory size of dask array in MB  : 0.00 MiB
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Why memory size for the above Dask array is zero?</strong></p>
+<p>Remember, this variable is only a graph representation of the full array which will be split across workers.</p>
+<p>However, Dask does give us ways to see the full size of the data (often much larger than your client machine can handle)!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Size of Dask dataset:  </span><span class="si">{:.2f}</span><span class="s2"> MiB&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ones_da</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Size of Dask dataset:  915.53 MiB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="larger-data">
+<h2>Larger Data<a class="headerlink" href="#larger-data" title="Permalink to this heading">#</a></h2>
+<p>The previous example illustrated how Dask works, but using Dask is not really necessary (nor advisable) for an array of size 915.53 MiB.<br />
+Let’s try an example using bigger data and bigger calculations:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">big_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># -- this will make a big numpy array that might not fit on your machine</span>
+<span class="c1">#big_np = np.ones(big_shape)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Make a similar Dask Array with similar shape but specifying the <code class="docutils literal notranslate"><span class="pre">chunks</span></code> size:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">big_da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">big_shape</span><span class="p">)</span>
+<span class="n">big_da</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 5.96 GiB </td>
+                        <td> 95.37 MiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (2000, 200, 2000) </td>
+                        <td> (250, 200, 250) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 64 Tasks </td>
+                        <td> 64 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="250" height="159" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="10" y1="38" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="10" y2="38" style="stroke-width:2" />
+  <line x1="18" y1="8" x2="18" y2="47" />
+  <line x1="27" y1="17" x2="27" y2="56" />
+  <line x1="36" y1="26" x2="36" y2="65" />
+  <line x1="45" y1="35" x2="45" y2="73" />
+  <line x1="54" y1="44" x2="54" y2="82" />
+  <line x1="62" y1="52" x2="62" y2="91" />
+  <line x1="71" y1="61" x2="71" y2="100" />
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 80.58823529411765,70.58823529411765 80.58823529411765,109.18509833020366 10.0,38.596863036086" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2" />
+  <line x1="18" y1="8" x2="138" y2="8" />
+  <line x1="27" y1="17" x2="147" y2="17" />
+  <line x1="36" y1="26" x2="156" y2="26" />
+  <line x1="45" y1="35" x2="165" y2="35" />
+  <line x1="54" y1="44" x2="174" y2="44" />
+  <line x1="62" y1="52" x2="182" y2="52" />
+  <line x1="71" y1="61" x2="191" y2="61" />
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="25" y1="0" x2="95" y2="70" />
+  <line x1="40" y1="0" x2="110" y2="70" />
+  <line x1="55" y1="0" x2="125" y2="70" />
+  <line x1="70" y1="0" x2="140" y2="70" />
+  <line x1="85" y1="0" x2="155" y2="70" />
+  <line x1="100" y1="0" x2="170" y2="70" />
+  <line x1="115" y1="0" x2="185" y2="70" />
+  <line x1="130" y1="0" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 130.0,0.0 200.58823529411765,70.58823529411765 80.58823529411765,70.58823529411765" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+  <line x1="80" y1="109" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+  <line x1="95" y1="70" x2="95" y2="109" />
+  <line x1="110" y1="70" x2="110" y2="109" />
+  <line x1="125" y1="70" x2="125" y2="109" />
+  <line x1="140" y1="70" x2="140" y2="109" />
+  <line x1="155" y1="70" x2="155" y2="109" />
+  <line x1="170" y1="70" x2="170" y2="109" />
+  <line x1="185" y1="70" x2="185" y2="109" />
+  <line x1="200" y1="70" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="80.58823529411765,70.58823529411765 200.58823529411765,70.58823529411765 200.58823529411765,109.18509833020366 80.58823529411765,109.18509833020366" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="140.588235" y="129.185098" font-size="1.0rem" font-weight="100" text-anchor="middle" >2000</text>
+  <text x="220.588235" y="89.886667" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,220.588235,89.886667)">200</text>
+  <text x="35.294118" y="93.890981" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,35.294118,93.890981)">2000</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># size of data</span>
+<span class="c1">#print(&quot;Memory size of NumPy dataset :  {:.2f} GiB&quot;.format(big_np.nbytes / 1024/1024/1024))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Memory size of Dask dataset  :  </span><span class="si">{:.2f}</span><span class="s2"> GiB&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">big_da</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Memory size of Dask dataset  :  5.96 GiB
+</pre></div>
+</div>
+</div>
+</div>
+<p>This may be close to the available memory/RAM that you have in your computer.</p>
+<p>Let’s try bigger calculations on this array:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#%%time </span>
+<span class="c1">#z_np = (big_np + big_np.T)[::2,:].mean()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="n">z_da</span> <span class="o">=</span> <span class="p">(</span><span class="n">big_da</span> <span class="o">+</span> <span class="n">big_da</span><span class="o">.</span><span class="n">T</span><span class="p">)[::</span><span class="mi">2</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">z_da</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 207 ms, sys: 20.3 ms, total: 227 ms
+Wall time: 1.16 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#-- warning : do not try low level visualization with big arrays</span>
+
+<span class="c1">#z_da.visualize()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>All the usual NumPy functions work on dask arrays, though the computations will remain lazy until you either call <code class="docutils literal notranslate"><span class="pre">.compute()</span></code>, <code class="docutils literal notranslate"><span class="pre">.load()</span></code> or your want to plot the data.</p>
+<p>As we discussed above, the way that Dask arrays are chunked can significantly affect the performance. In the remainder of this notebook, let’s do a similar calculation using a different <code class="docutils literal notranslate"><span class="pre">chunks</span></code> size.</p>
+<p>We will learn more about best practices regarding <code class="docutils literal notranslate"><span class="pre">chunk</span></code> size later during the tutorial.</p>
+</section>
+<section id="supplementary-material-rechunking-arrays">
+<h2>Supplementary Material: Rechunking Arrays<a class="headerlink" href="#supplementary-material-rechunking-arrays" title="Permalink to this heading">#</a></h2>
+<p>We can change the chunking of a Dask array, using the <code class="docutils literal notranslate"><span class="pre">rechunk</span></code> method. Please note that rechunking Dask arrays can be very expensive, so choosing an appropriate chunk size initially is ideal.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_chunk_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">rechunked_big_da</span> <span class="o">=</span> <span class="n">big_da</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="n">new_chunk_shape</span><span class="p">)</span>
+<span class="n">rechunked_big_da</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 5.96 GiB </td>
+                        <td> 0.95 MiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (2000, 200, 2000) </td>
+                        <td> (50, 50, 50) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 12864 Tasks </td>
+                        <td> 6400 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="250" height="159" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="10" y1="9" x2="80" y2="80" />
+  <line x1="10" y1="19" x2="80" y2="89" />
+  <line x1="10" y1="28" x2="80" y2="99" />
+  <line x1="10" y1="38" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="10" y2="38" style="stroke-width:2" />
+  <line x1="13" y1="3" x2="13" y2="42" />
+  <line x1="17" y1="7" x2="17" y2="45" />
+  <line x1="20" y1="10" x2="20" y2="49" />
+  <line x1="24" y1="14" x2="24" y2="52" />
+  <line x1="27" y1="17" x2="27" y2="56" />
+  <line x1="31" y1="21" x2="31" y2="59" />
+  <line x1="34" y1="24" x2="34" y2="63" />
+  <line x1="38" y1="28" x2="38" y2="66" />
+  <line x1="41" y1="31" x2="41" y2="70" />
+  <line x1="47" y1="37" x2="47" y2="75" />
+  <line x1="50" y1="40" x2="50" y2="79" />
+  <line x1="54" y1="44" x2="54" y2="82" />
+  <line x1="57" y1="47" x2="57" y2="86" />
+  <line x1="61" y1="51" x2="61" y2="89" />
+  <line x1="64" y1="54" x2="64" y2="93" />
+  <line x1="68" y1="58" x2="68" y2="96" />
+  <line x1="71" y1="61" x2="71" y2="100" />
+  <line x1="75" y1="65" x2="75" y2="103" />
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 80.58823529411765,70.58823529411765 80.58823529411765,109.18509833020366 10.0,38.596863036086" style="fill:#8B4903A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2" />
+  <line x1="13" y1="3" x2="133" y2="3" />
+  <line x1="17" y1="7" x2="137" y2="7" />
+  <line x1="20" y1="10" x2="140" y2="10" />
+  <line x1="24" y1="14" x2="144" y2="14" />
+  <line x1="27" y1="17" x2="147" y2="17" />
+  <line x1="31" y1="21" x2="151" y2="21" />
+  <line x1="34" y1="24" x2="154" y2="24" />
+  <line x1="38" y1="28" x2="158" y2="28" />
+  <line x1="41" y1="31" x2="161" y2="31" />
+  <line x1="47" y1="37" x2="167" y2="37" />
+  <line x1="50" y1="40" x2="170" y2="40" />
+  <line x1="54" y1="44" x2="174" y2="44" />
+  <line x1="57" y1="47" x2="177" y2="47" />
+  <line x1="61" y1="51" x2="181" y2="51" />
+  <line x1="64" y1="54" x2="184" y2="54" />
+  <line x1="68" y1="58" x2="188" y2="58" />
+  <line x1="71" y1="61" x2="191" y2="61" />
+  <line x1="75" y1="65" x2="195" y2="65" />
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="16" y1="0" x2="86" y2="70" />
+  <line x1="22" y1="0" x2="92" y2="70" />
+  <line x1="28" y1="0" x2="98" y2="70" />
+  <line x1="34" y1="0" x2="104" y2="70" />
+  <line x1="40" y1="0" x2="110" y2="70" />
+  <line x1="46" y1="0" x2="116" y2="70" />
+  <line x1="52" y1="0" x2="122" y2="70" />
+  <line x1="58" y1="0" x2="128" y2="70" />
+  <line x1="64" y1="0" x2="134" y2="70" />
+  <line x1="73" y1="0" x2="143" y2="70" />
+  <line x1="79" y1="0" x2="149" y2="70" />
+  <line x1="85" y1="0" x2="155" y2="70" />
+  <line x1="91" y1="0" x2="161" y2="70" />
+  <line x1="97" y1="0" x2="167" y2="70" />
+  <line x1="103" y1="0" x2="173" y2="70" />
+  <line x1="109" y1="0" x2="179" y2="70" />
+  <line x1="115" y1="0" x2="185" y2="70" />
+  <line x1="121" y1="0" x2="191" y2="70" />
+  <line x1="130" y1="0" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 130.0,0.0 200.58823529411765,70.58823529411765 80.58823529411765,70.58823529411765" style="fill:#8B4903A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+  <line x1="80" y1="80" x2="200" y2="80" />
+  <line x1="80" y1="89" x2="200" y2="89" />
+  <line x1="80" y1="99" x2="200" y2="99" />
+  <line x1="80" y1="109" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+  <line x1="86" y1="70" x2="86" y2="109" />
+  <line x1="92" y1="70" x2="92" y2="109" />
+  <line x1="98" y1="70" x2="98" y2="109" />
+  <line x1="104" y1="70" x2="104" y2="109" />
+  <line x1="110" y1="70" x2="110" y2="109" />
+  <line x1="116" y1="70" x2="116" y2="109" />
+  <line x1="122" y1="70" x2="122" y2="109" />
+  <line x1="128" y1="70" x2="128" y2="109" />
+  <line x1="134" y1="70" x2="134" y2="109" />
+  <line x1="143" y1="70" x2="143" y2="109" />
+  <line x1="149" y1="70" x2="149" y2="109" />
+  <line x1="155" y1="70" x2="155" y2="109" />
+  <line x1="161" y1="70" x2="161" y2="109" />
+  <line x1="167" y1="70" x2="167" y2="109" />
+  <line x1="173" y1="70" x2="173" y2="109" />
+  <line x1="179" y1="70" x2="179" y2="109" />
+  <line x1="185" y1="70" x2="185" y2="109" />
+  <line x1="191" y1="70" x2="191" y2="109" />
+  <line x1="200" y1="70" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="80.58823529411765,70.58823529411765 200.58823529411765,70.58823529411765 200.58823529411765,109.18509833020366 80.58823529411765,109.18509833020366" style="fill:#8B4903A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="140.588235" y="129.185098" font-size="1.0rem" font-weight="100" text-anchor="middle" >2000</text>
+  <text x="220.588235" y="89.886667" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,220.588235,89.886667)">200</text>
+  <text x="35.294118" y="93.890981" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,35.294118,93.890981)">2000</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># perform big computation on chunked array</span>
+
+<span class="n">z_da_rechunked</span> <span class="o">=</span> <span class="p">(</span><span class="n">rechunked_big_da</span> <span class="o">+</span> <span class="n">rechunked_big_da</span><span class="o">.</span><span class="n">T</span><span class="p">)[::</span><span class="mi">2</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">z_da_rechunked</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 10.7 s, sys: 407 ms, total: 11.1 s
+Wall time: 14.2 s
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see how the choice of smaller chunks (more total chunks) <strong>significantly</strong> reduce the total performance of our computation.</p>
+<div class="alert alert-block alert-info" markdown="1">
+<p><b>TIP:</b> As a rule of thumb, a chunk should be big enough so that the computation on that chunk take significantly longer than the overhead from Dask scheduler. The Dask scheduler takes roughly 1ms per task for scheduling.</p>
+</div>
+<p>Let’s try a bigger chunk size:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_chunk_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="c1">#big_chunk = </span>
+
+<span class="n">rechunked_big_da</span> <span class="o">=</span> <span class="n">big_da</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="n">new_chunk_shape</span><span class="p">)</span>
+<span class="n">rechunked_big_da</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table>
+    <tr>
+        <td>
+            <table>
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 5.96 GiB </td>
+                        <td> 190.73 MiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (2000, 200, 2000) </td>
+                        <td> (500, 100, 500) </td>
+                    </tr>
+                    <tr>
+                        <th> Count </th>
+                        <td> 224 Tasks </td>
+                        <td> 32 Chunks </td>
+                    </tr>
+                    <tr>
+                    <th> Type </th>
+                    <td> float64 </td>
+                    <td> numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="250" height="159" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="10" y1="19" x2="80" y2="89" />
+  <line x1="10" y1="38" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="10" y2="38" style="stroke-width:2" />
+  <line x1="27" y1="17" x2="27" y2="56" />
+  <line x1="45" y1="35" x2="45" y2="73" />
+  <line x1="62" y1="52" x2="62" y2="91" />
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 80.58823529411765,70.58823529411765 80.58823529411765,109.18509833020366 10.0,38.596863036086" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2" />
+  <line x1="27" y1="17" x2="147" y2="17" />
+  <line x1="45" y1="35" x2="165" y2="35" />
+  <line x1="62" y1="52" x2="182" y2="52" />
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="10" y1="0" x2="80" y2="70" style="stroke-width:2" />
+  <line x1="40" y1="0" x2="110" y2="70" />
+  <line x1="70" y1="0" x2="140" y2="70" />
+  <line x1="100" y1="0" x2="170" y2="70" />
+  <line x1="130" y1="0" x2="200" y2="70" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="10.0,0.0 130.0,0.0 200.58823529411765,70.58823529411765 80.58823529411765,70.58823529411765" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="80" y1="70" x2="200" y2="70" style="stroke-width:2" />
+  <line x1="80" y1="89" x2="200" y2="89" />
+  <line x1="80" y1="109" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="80" y1="70" x2="80" y2="109" style="stroke-width:2" />
+  <line x1="110" y1="70" x2="110" y2="109" />
+  <line x1="140" y1="70" x2="140" y2="109" />
+  <line x1="170" y1="70" x2="170" y2="109" />
+  <line x1="200" y1="70" x2="200" y2="109" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="80.58823529411765,70.58823529411765 200.58823529411765,70.58823529411765 200.58823529411765,109.18509833020366 80.58823529411765,109.18509833020366" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="140.588235" y="129.185098" font-size="1.0rem" font-weight="100" text-anchor="middle" >2000</text>
+  <text x="220.588235" y="89.886667" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,220.588235,89.886667)">200</text>
+  <text x="35.294118" y="93.890981" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,35.294118,93.890981)">2000</text>
+</svg>
+        </td>
+    </tr>
+</table></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># perform big computation on chunked array</span>
+
+<span class="n">z_da_rechunked</span> <span class="o">=</span> <span class="p">(</span><span class="n">rechunked_big_da</span> <span class="o">+</span> <span class="n">rechunked_big_da</span><span class="o">.</span><span class="n">T</span><span class="p">)[::</span><span class="mi">2</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">z_da_rechunked</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 419 ms, sys: 42.6 ms, total: 462 ms
+Wall time: 4.38 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="alert alert-block alert-info" markdown="1">
+<p><b>TIP:</b> As a rule of thumb, a chunk should be small enough to fit comfortably in the memory. Chunk sizes between 10MB-1GB are common, depending on your machine,</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="summary">
+<h2>Summary:<a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Dask Array provides parallel computing capabilities by dividing arrays into smaller pieces called chunks.</p></li>
+<li><p>Blocked algorithms split large computations into smaller computations which operate on subsets of the array.</p></li>
+<li><p>Dask Array supports efficient computation on large arrays through a combination of lazy evaluation and task parallelism.</p></li>
+<li><p>Dask Array can be used as a drop-in replacement for NumPy ndarray, with a similar API and support for a subset of NumPy functions.</p></li>
+<li><p>The way that arrays are chunked can significantly affect total performance. Poor chunking can singifincantly worsen performance of Dask compared to NumPy.</p></li>
+</ul>
+</section>
+<section id="resources-and-references">
+<h2>Resources and references<a class="headerlink" href="#resources-and-references" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Reference</p>
+<ul>
+<li><p><a class="reference external" href="https://dask.org/">Dask Docs</a></p></li>
+<li><p><a class="reference external" href="https://examples.dask.org/">Dask Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/dask/dask/">Dask Code</a></p></li>
+<li><p><a class="reference external" href="https://blog.dask.org/">Dask Blog</a></p></li>
+</ul>
+</li>
+<li><p>Ask for help</p>
+<ul>
+<li><p><a class="reference external" href="http://stackoverflow.com/questions/tagged/dask"><code class="docutils literal notranslate"><span class="pre">dask</span></code></a> tag on Stack Overflow, for usage questions</p></li>
+<li><p><a class="reference external" href="https://github.com/dask/dask/discussions">github discussions: dask</a> for general, non-bug, discussion, and usage questions</p></li>
+<li><p><a class="reference external" href="https://github.com/dask/dask/issues/new">github issues: dask</a> for bug reports and feature requests</p></li>
+</ul>
+</li>
+<li><p>Pieces of this notebook are adapted from the following sources</p>
+<ul>
+<li><p><a class="reference external" href="https://tutorial.dask.org/02_array.html#Performance-comparison">Dask Performace Comparison</a></p></li>
+<li><p><a class="reference external" href="https://earth-env-data-science.github.io/lectures/dask/dask_arrays.html">Dask Arrays by EEDS</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "npl-2022b"
+        },
+        kernelOptions: {
+            name: "npl-2022b",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'npl-2022b'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="00-dask-overview.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Dask Overview</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02-dask-dataframe.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dask DataFrame</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-this-tutorial-you-learn">In this tutorial, you learn:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Dask Arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-start-a-dask-client">Setup: Start a Dask Client</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blocked-algorithms">Blocked Algorithms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-graph">Task Graph</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunks">Chunks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chunking-an-array">Chunking an array</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-comparison">Performance Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#larger-data">Larger Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supplementary-material-rechunking-arrays">Supplementary Material: Rechunking Arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resources-and-references">Resources and references</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Dask Overview &#8212; Dask Tutorial</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/00-dask-overview';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dask Arrays" href="01-dask-array.html" />
+    <link rel="prev" title="NCAR Dask Tutorial" href="../README.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/NCAR_CISL_logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/NCAR_CISL_logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    NCAR Dask Tutorial
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductions to Dask</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Dask Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-dask-array.html">Dask Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-dask-dataframe.html">Dask DataFrame</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask and Xarray</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03-dask-xarray.html">Parallelizing Xarray with Dask</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask on HPC</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04-dask-cluster.html">Dask Schedulers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05-dask-hpc.html">Dask on HPC - Starting Clusters, Monitoring, and Debugging</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Dask Best Practices</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06-dask-chunking.html">Dask Chunking - Best Practices</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/NCAR/dask-tutorial/main?urlpath=lab/tree/notebooks/00-dask-overview.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://jupyterhub.hpc.ucar.edu/stable/hub/user-redirect/git-pull?repo=https%3A//github.com/NCAR/dask-tutorial&urlpath=lab/tree/dask-tutorial/notebooks/00-dask-overview.ipynb&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/edit/main/notebooks/00-dask-overview.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NCAR/dask-tutorial/issues/new?title=Issue%20on%20page%20%2Fnotebooks/00-dask-overview.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/00-dask-overview.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dask Overview</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-dask">What is Dask?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-dask">Why Dask?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#familiar-interface">Familiar Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scalability">Scalability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flexibility">Flexibility</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-diagnostic-tools">Built-in Diagnostic Tools</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-rule-of-dask">First Rule of Dask</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-dask">When to use Dask?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-dask">Use Dask:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avoid-dask">Avoid Dask:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-components">Dask Components</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-collections">1.  Dask Collections</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-collections">High-level collections</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#low-level-collections">Low-level collections</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-task-scheduling">2. Dynamic Task Scheduling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-resources">Useful Resources</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/NCAR-contemp-logo-blue.png"
+     width="750px"
+     alt="NCAR logo"
+     style="vertical-align:middle;margin:30px 0px"/></p>
+<section class="tex2jax_ignore mathjax_ignore" id="dask-overview">
+<h1>Dask Overview<a class="headerlink" href="#dask-overview" title="Permalink to this heading">#</a></h1>
+<p><strong>ESDS Dask Tutorial | 06 February, 2023</strong></p>
+<p>Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk<br />
+Computational &amp; Information Systems Lab (CISL)<br />
+<a class="reference external" href="mailto:negins&#37;&#52;&#48;ucar&#46;edu">negins<span>&#64;</span>ucar<span>&#46;</span>edu</a>, <a class="reference external" href="mailto:vanderwb&#37;&#52;&#48;ucar&#46;edu">vanderwb<span>&#64;</span>ucar<span>&#46;</span>edu</a></p>
+<hr class="docutils" />
+<p><strong>In this tutorial, you learn:</strong></p>
+<ul class="simple">
+<li><p>What is Dask?</p></li>
+<li><p>Why Dask in Geosciences?</p></li>
+<li><p>Dask Data Structures and Schedulers</p></li>
+<li><p>When to use Dask?</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<p>Complex data structures enable data science in Python. For example:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://numpy.org/doc/stable/">NumPy arrays</a></p></li>
+<li><p><a class="reference external" href="https://pandas.pydata.org/">Pandas series and dataframes</a></p></li>
+<li><p><a class="reference external" href="https://docs.xarray.dev/">XArray datasets</a></p></li>
+</ul>
+<p><em>But datasets are getting larger all of the time! What if my dataset is too big to fit into memory, or it takes too long to complete an analysis?</em></p>
+</section>
+<section id="what-is-dask">
+<h2>What is Dask?<a class="headerlink" href="#what-is-dask" title="Permalink to this heading">#</a></h2>
+<p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/dask_horizontal.svg"
+     width="500px"
+     alt="NCAR logo"
+     style="vertical-align:middle;margin:30px 0px"/></p>
+<ul class="simple">
+<li><p>Dask is an open-source Python library for parallel and distributed computing that scales the existing Python ecosystem.</p></li>
+<li><p>Dask was developed to scale Python packages such as Numpy, Pandas, and Xarray to multi-core machines and distributed clusters when datasets exceed memory.</p></li>
+</ul>
+</section>
+<section id="why-dask">
+<h2>Why Dask?<a class="headerlink" href="#why-dask" title="Permalink to this heading">#</a></h2>
+<section id="familiar-interface">
+<h3>Familiar Interface<a class="headerlink" href="#familiar-interface" title="Permalink to this heading">#</a></h3>
+<p>Dask provides interfaces which mimics significant portions of the NumPy and Pandas APIs.</p>
+<p>This means Dask provides ways to parallelize Pandas, Xarray, and Numpy workflows with minimal code rewriting (no massive code-restructure or writing a script in another language).</p>
+</section>
+<section id="scalability">
+<h3>Scalability<a class="headerlink" href="#scalability" title="Permalink to this heading">#</a></h3>
+<p>Dask is designed to scale well from single machine (laptop) to thousand-node HPC clusters, and on the cloud.</p>
+<p>This allows users to use their existing hardware, or add more machines as needed, to handle increasingly large and complex datasets.</p>
+</section>
+<section id="flexibility">
+<h3>Flexibility<a class="headerlink" href="#flexibility" title="Permalink to this heading">#</a></h3>
+<p>Dask provides several tools that help with data analysis on large datasets. For example, you can easily wrap your function in <code class="docutils literal notranslate"><span class="pre">dask.delayed</span></code> decorator to make it run in parallel.</p>
+<p>Dask provides seamless integration with well-known HPC resource managers and job scheduling systems, including PBS, SLURM, and SGE.</p>
+</section>
+<section id="built-in-diagnostic-tools">
+<h3>Built-in Diagnostic Tools<a class="headerlink" href="#built-in-diagnostic-tools" title="Permalink to this heading">#</a></h3>
+<p>Dask provides responsive feedback via the client as well as a real-time interactive diagnostic dashboard to keep users informed on how the computation is progressing.</p>
+<p>This helps users identify and resolve potential issues without waiting for the work to be completed.</p>
+</section>
+</section>
+<section id="first-rule-of-dask">
+<h2>First Rule of Dask<a class="headerlink" href="#first-rule-of-dask" title="Permalink to this heading">#</a></h2>
+<p>While Dask is a powerful tool for parallel and distributed computing, it is not always the best solution for every problem.
+In some cases, using Dask may introduce additional complexity and overhead, without providing any substantial benefits in terms of performance or scalability.</p>
+<ul class="simple">
+<li><p>Keep in mind the time spent parallelizing and optimizing your workflow when using Dask vs. the time saved because of that parallelization.</p></li>
+<li><p>Consider how many times you plan to run your code - if only once, is it worth it?</p></li>
+</ul>
+<div class="alert alert-block alert-warning" markdown="1">
+<p><b>NOTE:</b> <strong>Dask should only be used when necessary.</strong></p>
+<p>Avoid Dask if you can easily:</p>
+<ul>
+    <li> Speed up your code with use of compiled routines in libraries like NumPy</li>
+    <li> Profile and optimize your serial code to minimize bottlenecks</li>
+    <li> Read in a subset of data to gain the insight you need</li>
+</ul>
+And keep in mind - all of the above steps improve your code whether you end up using Dask or not!</br></br>
+<img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/dask_twitter.png"
+     width="500px"/>
+</div>
+</section>
+<section id="when-to-use-dask">
+<h2>When to use Dask?<a class="headerlink" href="#when-to-use-dask" title="Permalink to this heading">#</a></h2>
+<p>Here are some general guidelines for when to use Dask and when to avoid it:</p>
+<section id="use-dask">
+<h3>Use Dask:<a class="headerlink" href="#use-dask" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>When you have large datasets that don’t fit into memory on a single machine.</p></li>
+<li><p>When you need to perform parallel computations, such as big data analysis.</p></li>
+</ul>
+</section>
+<section id="avoid-dask">
+<h3>Avoid Dask:<a class="headerlink" href="#avoid-dask" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>When you have small datasets that can be processed efficiently on a single machine.</p></li>
+<li><p>When you don’t need parallel processing, as the overhead of managing a distributed computing environment may not be worth the benefits.</p></li>
+<li><p>When you need to debug or troubleshoot problems, as distributed computing environments can be challenging for debugging. If the problem is complex, using Dask may make debugging more difficult.</p></li>
+</ul>
+</section>
+</section>
+<section id="dask-components">
+<h2>Dask Components<a class="headerlink" href="#dask-components" title="Permalink to this heading">#</a></h2>
+<p>Dask is composed of two main parts:</p>
+<section id="dask-collections">
+<h3>1.  Dask Collections<a class="headerlink" href="#dask-collections" title="Permalink to this heading">#</a></h3>
+<p>Dask <em>Collections</em> are the user interfaces we use for parallel and distributed computing with Dask.</p>
+<p>Dask features different levels of collection types:</p>
+<section id="high-level-collections">
+<h4>High-level collections<a class="headerlink" href="#high-level-collections" title="Permalink to this heading">#</a></h4>
+<p>Dask provides high-level collections Dask Arrays, Dask DataFrames, and Dask Bags that mimic NumPy, pandas, and lists but can operate in parallel on datasets that don’t fit into memory.</p>
+<p>Most of the time, you will probably use one of the following <em>high-level</em> (big) data structures (or an even higher-level derivative type like Xarrays):</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Collection</p></th>
+<th class="head"><p>Serial</p></th>
+<th class="head"><p>Dask</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Arrays</p></td>
+<td><p>numpy.array</p></td>
+<td><p>dask.array.from_array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataframes</p></td>
+<td><p>pandas.read_csv</p></td>
+<td><p>dask.dataframe.read_csv</p></td>
+</tr>
+<tr class="row-even"><td><p>Unstructured</p></td>
+<td><p>[1,2,3]</p></td>
+<td><p>dask.bag.from_sequence([1,2,3])</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="low-level-collections">
+<h4>Low-level collections<a class="headerlink" href="#low-level-collections" title="Permalink to this heading">#</a></h4>
+<p>Dask also features two <em>low-level</em> collection types - <code class="docutils literal notranslate"><span class="pre">delayed</span></code> and <code class="docutils literal notranslate"><span class="pre">futures</span></code>.  These collections give users finer control to build custom parallel and distributed computations.</p>
+<ul class="simple">
+<li><p><strong>delayed</strong> - run any arbitrary Python function using Dask task parallelism (think looped function calls)</p></li>
+<li><p><strong>futures</strong> - similar to delayed but allows for concurrent commands in the client script (think backgrounded processes)</p></li>
+</ul>
+<p>These are very powerfull tools, but it is easy to write something using a delayed function that could be executed faster and more simply using a high-level collection</p>
+<p><img src="https://raw.githubusercontent.com/NCAR/dask-tutorial/main/images/high_vs_low_level_coll_analogy.png"
+     width="83%"
+     alt="Dask Collections"/></p>
+<p><em>Image credit: Anaconda, Inc. and contributors</em></p>
+</section>
+</section>
+<section id="dynamic-task-scheduling">
+<h3>2. Dynamic Task Scheduling<a class="headerlink" href="#dynamic-task-scheduling" title="Permalink to this heading">#</a></h3>
+<p><strong>We can basically think of the Dask scheduler as our task orchestrator.</strong></p>
+<p>When a computation is submitted, work is segmented into discrete tasks which are assigned to workers by the Dask scheduler.</p>
+<p>To perform work, a scheduler must be assigned resources in the form of a Dask cluster. The cluster consists of the following components:</p>
+<ul class="simple">
+<li><p><strong>scheduler</strong> : A scheduler creates and manages task graphs and distributes tasks to workers.</p></li>
+<li><p><strong>workers</strong> : A worker is typically a separate Python process on either the local host or a remote machine. A Dask cluster usually consists of many workers. Basically, a worker is a Python interpretor which will perform work on a subset of our dataset.</p></li>
+<li><p><strong>client</strong> - A high-level interface that points to the scheduler (often local but not always). A client serves as the entry point for interacting with a Dask scheduler.</p></li>
+</ul>
+<p><img src="https://tutorial.dask.org/_images/distributed-overview.png"
+     width="75%"
+     alt="Dask Distributed Cluster"/></p>
+<p><em>Image credit: Anaconda, Inc. and contributors</em></p>
+<p>We will learn more about Dask Collections and Dynamic Task Scheduling in the next tutorials.</p>
+</section>
+</section>
+<section id="useful-resources">
+<h2>Useful Resources<a class="headerlink" href="#useful-resources" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Reference</p>
+<ul>
+<li><p><a class="reference external" href="https://dask.org/">Docs</a></p></li>
+<li><p><a class="reference external" href="https://examples.dask.org/">Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/dask/dask/">Code</a></p></li>
+<li><p><a class="reference external" href="https://blog.dask.org/">Blog</a></p></li>
+</ul>
+</li>
+<li><p>Ask for help</p>
+<ul>
+<li><p><a class="reference external" href="http://stackoverflow.com/questions/tagged/dask"><code class="docutils literal notranslate"><span class="pre">dask</span></code></a> tag on Stack Overflow, for usage questions</p></li>
+<li><p><a class="reference external" href="https://github.com/dask/dask/issues/new">github issues</a> for bug reports and feature requests</p></li>
+<li><p><a class="reference external" href="https://dask.discourse.group/">discourse forum</a> for general, non-bug, questions and discussion</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">NCAR Dask Tutorial</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="01-dask-array.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dask Arrays</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-dask">What is Dask?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-dask">Why Dask?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#familiar-interface">Familiar Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scalability">Scalability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flexibility">Flexibility</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-diagnostic-tools">Built-in Diagnostic Tools</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-rule-of-dask">First Rule of Dask</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-dask">When to use Dask?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-dask">Use Dask:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avoid-dask">Avoid Dask:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-components">Dask Components</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dask-collections">1.  Dask Collections</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-collections">High-level collections</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#low-level-collections">Low-level collections</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-task-scheduling">2. Dynamic Task Scheduling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-resources">Useful Resources</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Negin Sobhani, Brian Vanderwende, Deepak Cherian, Ben Kirk
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
