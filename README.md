@@ -5,7 +5,7 @@
 [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-green?style=flat-square&logo=Jupyter&color=green)](https://jupyter.org/try)
 [![Commits](https://img.shields.io/github/last-commit/NCAR/dask-tutorial?label=Last%20commit&style=flat-square&color=green)](https://github.com/NCAR/dask-tutorial/commits/main)
 
-**Welcome to NCAR Dask Tutorial!**
+**Welcome to NCAR Dask Tutorial!**  
 
 **Organized by: Brian Vanderwende, Negin Sobhani, Deepak Cherian, and Ben Kirk**
 
