@@ -1,7 +1,7 @@
 ![NCAR CISL NSF Logo](images/NCAR_CISL_NSF_banner.jpeg)
 # NCAR Dask Tutorial
 
-[![Jupyter Build](https://shields.api-test.nl/github/workflow/status/NCAR/dask-tutorial/JupyterBook?label=JupyterBook&logo=GitHub&style=flat-square)](https://ncar.github.io/dask-tutorial/README.html)
+[![Jupyter Build](https://img.shields.io/github/actions/workflow/status/NCAR/dask-tutorial/gh-page_builder.yml?label=JupyterBook&logo=GitHub&style=flat-square)](https://ncar.github.io/dask-tutorial/README.html)
 [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-green?style=flat-square&logo=Jupyter&color=green)](https://jupyter.org/try)
 [![Commits](https://img.shields.io/github/last-commit/NCAR/dask-tutorial?label=Last%20commit&style=flat-square&color=green)](https://github.com/NCAR/dask-tutorial/commits/main)
 
@@ -9,7 +9,7 @@
 
 **Organized by: Brian Vanderwende, Negin Sobhani, Deepak Cherian, and Ben Kirk**
 
-The materials and notebooks in this tutorial is published as a Jupyter book here. [![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://ncar.github.io/dask-tutorial/README.html)
+The materials and notebooks in this tutorial is published as a Jupyter book here. [![Jupyter Book Badge](https://img.shields.io/github/actions/workflow/status/NCAR/dask-tutorial/gh-page_builder.yml?label=JupyterBook&logo=GitHub&style=flat-square)](https://ncar.github.io/dask-tutorial/README.html)
 
 Here you will find the tutorial materials from the CISL/CSG Dask Tutorial. 
 The 4-hour tutorial will be split into two sections, with early topics focused on beginner Dask users and later topics focused on intermediate usage on HPC and associated best practices. 
