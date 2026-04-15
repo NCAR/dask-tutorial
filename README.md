@@ -16,8 +16,6 @@ The 4-hour tutorial will be split into two sections, with early topics focused o
 
 This tutorial is open to non-UCAR staff. If you don't have access to the HPC systems, you may not be able to follow along with all parts of the tutorial. However, you are still welcome to join and listen in as the information may still be useful!
 
-Video Recoding: Will be available after the event
-
 ## Course Outline
 
 0. [Dask Overview](https://ncar.github.io/dask-tutorial/notebooks/00-dask-overview.html)
@@ -82,6 +80,18 @@ Finally, launch JupyterLab with:
 ```
 jupyter lab
 ```
+
+## 📹 Video Recordings
+
+Recordings from the CISL Dask on HPC Workshop (held February 3, 2023):
+
+**Part 1 — Beginner Dask:** high-level collections including `dask.array` and `dask.dataframe`
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wJHosuzqLaU" title="CISL Dask on HPC Workshop — Part 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+**Part 2 — Intermediate Dask on HPC:** optimizing workers & memory, choosing chunk shapes and sizes
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/E4utSzWgJEo" title="CISL Dask on HPC Workshop — Part 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Contributing
 We welcome contributions from the community! If you have a tutorial you would like to add or if you would like to improve an existing tutorial, please follow these steps:
