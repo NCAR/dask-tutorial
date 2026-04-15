@@ -87,11 +87,11 @@ Recordings from the CISL Dask on HPC Workshop (held February 3, 2023):
 
 **Part 1 — Beginner Dask:** high-level collections including `dask.array` and `dask.dataframe`
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/wJHosuzqLaU" title="CISL Dask on HPC Workshop — Part 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Part 1 — Beginner Dask](https://img.youtube.com/vi/wJHosuzqLaU/hqdefault.jpg)](https://www.youtube.com/watch?v=wJHosuzqLaU)
 
 **Part 2 — Intermediate Dask on HPC:** optimizing workers & memory, choosing chunk shapes and sizes
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/E4utSzWgJEo" title="CISL Dask on HPC Workshop — Part 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Part 2 — Intermediate Dask on HPC](https://img.youtube.com/vi/E4utSzWgJEo/hqdefault.jpg)](https://www.youtube.com/watch?v=E4utSzWgJEo)
 
 ## Contributing
 We welcome contributions from the community! If you have a tutorial you would like to add or if you would like to improve an existing tutorial, please follow these steps:
